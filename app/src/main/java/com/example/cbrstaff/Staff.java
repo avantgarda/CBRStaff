@@ -1,6 +1,9 @@
 package com.example.cbrstaff;
 
-public class Staff {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Staff implements Parcelable {
 
     private String name;
     private Currency balance;
@@ -13,7 +16,24 @@ public class Staff {
         this.balance = balance;
     }
 
-    public String getName() {
+    private Staff(Parcel in) {
+        name = in.readString();
+        balance = in.readParcelable(Currency.class.getClassLoader());
+    }
+
+    public static final Creator<Staff> CREATOR = new Creator<Staff>() {
+        @Override
+        public Staff createFromParcel(Parcel in) {
+            return new Staff(in);
+        }
+
+        @Override
+        public Staff[] newArray(int size) {
+            return new Staff[size];
+        }
+    };
+
+    String getName() {
         return name;
     }
 
@@ -21,11 +41,22 @@ public class Staff {
         this.name = name;
     }
 
-    public Currency getBalance() {
+    Currency getBalance() {
         return balance;
     }
 
     public void setBalance(Currency balance) {
         this.balance = balance;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeParcelable(balance, flags);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.cbrstaff;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -59,7 +60,9 @@ public class Outstanding extends AppCompatActivity {
 
         databaseStaff = FirebaseDatabase.getInstance().getReference("staff");
 
-        staffList = new ArrayList<>();
+//        staffList = new ArrayList<>();
+        Intent intent = getIntent();
+        staffList = intent.getParcelableArrayListExtra("staff_list");
 
         mLayoutManager = new LinearLayoutManager(this);
         mAdapter = new StaffAdapter(staffList,this);
