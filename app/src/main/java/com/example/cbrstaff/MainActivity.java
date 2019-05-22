@@ -11,8 +11,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +29,39 @@ public class MainActivity extends AppCompatActivity {
     Button outstandingTipsButton;
 
     DatabaseReference databaseStaff;
+
+    ArrayList<Staff> staffList;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        databaseStaff.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!staffList.isEmpty()){ staffList.clear(); }
+                for(DataSnapshot staffSnapshot : dataSnapshot.getChildren()){
+                    Staff staff = staffSnapshot.getValue(Staff.class);
+                    staffList.add(staff);
+                }
+                // Update total outstanding balance
+                updateOutstanding();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.i("FireBaseError", "onCancelled: Error in database.");
+            }
+        });
+    }
+
+    private void updateOutstanding() {
+        double totalOutstanding = 0;
+        for(Staff staff : staffList){
+            totalOutstanding += staff.getBalance().getEuro();
+        }
+        outstandingTipsText.setText(getString(R.string.display_euro, totalOutstanding));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
         outstandingTipsButton = findViewById(R.id.outstandTipsButton);
 
         databaseStaff = FirebaseDatabase.getInstance().getReference("staff");
+
+        staffList = new ArrayList<>();
 
         newTipsButton.setOnClickListener(new View.OnClickListener() {
             @Override

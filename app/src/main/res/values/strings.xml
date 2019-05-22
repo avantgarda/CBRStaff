@@ -4,4 +4,7 @@
     <string name="new_tips">New</string>
     <string name="outstanding_tips">Outstanding</string>
     <string name="outstanding_none">None Outstanding</string>
+    <string name="display_euro">€%.2f</string>
+    <string name="display_dollar">$%.2f</string>
+    <string name="display_pound">£%.2f</string>
 </resources>
