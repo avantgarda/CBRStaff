@@ -20,32 +20,27 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String EXTRA_ROSTER = "com.example.cbrstaff.EXTRA_ROSTER";
-    public static final String EXTRA_WORKDAY = "com.example.cbrstaff.EXTRA_WORKDAY";
-
-    public static final int SAMPLE_ROSTER_INDEX = 0;
+    public static final String EXTRA_STAFF = "com.example.cbrstaff.EXTRA_STAFF";
 
     TextView mainTitleText;
     TextView outstandingTipsText;
     Button newTipsButton;
     Button outstandingTipsButton;
 
-    DatabaseReference databaseRoster;
-    DatabaseReference databaseWorkDay;
-    ArrayList<Roster> rosterList;
-    ArrayList<WorkDay> workDayList;
+    DatabaseReference databaseStaff;
+    ArrayList<Staff> mStaff;
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        databaseRoster.addValueEventListener(new ValueEventListener() {
+        databaseStaff.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!rosterList.isEmpty()){ rosterList.clear(); }
-                for(DataSnapshot rosterSnapshot : dataSnapshot.getChildren()){
-                    Roster roster = rosterSnapshot.getValue(Roster.class);
-                    rosterList.add(roster);
+                if(!mStaff.isEmpty()){ mStaff.clear(); }
+                for(DataSnapshot staffSnapshot : dataSnapshot.getChildren()){
+                    Staff staff = staffSnapshot.getValue(Staff.class);
+                    mStaff.add(staff);
                 }
                 // Update total outstanding balance
                 updateOutstanding();
@@ -68,16 +63,14 @@ public class MainActivity extends AppCompatActivity {
         newTipsButton = findViewById(R.id.newTipsButton);
         outstandingTipsButton = findViewById(R.id.outstandTipsButton);
 
-        databaseRoster = FirebaseDatabase.getInstance().getReference("roster");
-        databaseWorkDay = FirebaseDatabase.getInstance().getReference("workDay");
+        databaseStaff = FirebaseDatabase.getInstance().getReference("staff");
 
-        rosterList = new ArrayList<>();
-        workDayList = new ArrayList<>();
+        mStaff = new ArrayList<>();
 
         newTipsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addSampleRoster();
+                addSampleStaff();
                 /*String idFire = databaseWorkDay.push().getKey();
                 // Change Outstanding to new activity class for WorkDay creation
                 Intent intent = new Intent(MainActivity.this, Outstanding.class);
@@ -90,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, Outstanding.class);
-                intent.putExtra(EXTRA_ROSTER, getRoster(rosterList, SAMPLE_ROSTER_INDEX));
+                intent.putParcelableArrayListExtra(EXTRA_STAFF, mStaff);
                 startActivity(intent);
             }
         });
@@ -98,35 +91,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateOutstanding() {
         double totalOutstanding = 0;
-        if(!rosterList.isEmpty()) {
-            if(!rosterList.get(SAMPLE_ROSTER_INDEX).getStaffList().isEmpty()) {
-                for (Staff staff : rosterList.get(SAMPLE_ROSTER_INDEX).getStaffList()) {
-                    totalOutstanding += staff.getBalance().getEuro();
-                }
-            }
+        for (Staff staff : mStaff) {
+            totalOutstanding += staff.getBalance().getEuro();
         }
         outstandingTipsText.setText(getString(R.string.display_euro, totalOutstanding));
     }
 
-    private Roster getRoster(ArrayList<Roster> rosterArrayList, int index) {
-        if(rosterArrayList.isEmpty()){ return new Roster(); }
-        return rosterArrayList.get(index);
-    }
-
-    private void addSampleRoster() {
-        // Add sample Roster instance to FireBase
-        String idFire = databaseRoster.push().getKey();
+    private void addSampleStaff() {
+        // Add sample Staff instances to FireBase
+        String idFire = databaseStaff.push().getKey();
         if (TextUtils.isEmpty(idFire)){
-            Log.i("FireBaseError", "addSampleRoster: FireBase key could not be generated");
+            Log.i("FireBaseError", "addSampleStaff: FireBase key could not be generated");
             return;
         }
         Currency newBalance = new Currency(3,4,5);
         Staff newStaff = new Staff("John", newBalance);
-        ArrayList<Staff> newStaffList = new ArrayList<>();
-        newStaffList.add(newStaff);
-        newStaffList.add(newStaff);
-        newStaffList.add(newStaff);
-        Roster newRoster = new Roster(newStaffList);
-        databaseRoster.child(idFire).setValue(newRoster);
+        databaseStaff.child(idFire).setValue(newStaff);
     }
 }

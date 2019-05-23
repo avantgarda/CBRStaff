@@ -25,8 +25,7 @@ public class Outstanding extends AppCompatActivity {
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
 
-    Roster roster;
-    ArrayList<Staff> staffList;
+    ArrayList<Staff> mStaff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +35,11 @@ public class Outstanding extends AppCompatActivity {
         outstandingTitleText = findViewById(R.id.outstandingScreenTitle);
         mRecyclerView = findViewById(R.id.outstandingRecyclerView);
 
-        staffList = new ArrayList<>();
-
         Intent intent = getIntent();
-        roster = intent.getParcelableExtra(MainActivity.EXTRA_ROSTER);
-        if(roster.getStaffList() != null){ staffList = roster.getStaffList(); }
+        mStaff = intent.getParcelableArrayListExtra(MainActivity.EXTRA_STAFF);
 
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new StaffAdapter(staffList,this);
+        mAdapter = new StaffAdapter(mStaff,this);
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
