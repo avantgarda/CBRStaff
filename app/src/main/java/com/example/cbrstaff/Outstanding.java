@@ -25,30 +25,8 @@ public class Outstanding extends AppCompatActivity {
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
 
-    DatabaseReference databaseStaff;
+    Roster roster;
     ArrayList<Staff> staffList;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        databaseStaff.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!staffList.isEmpty()){ staffList.clear(); }
-                for(DataSnapshot staffSnapshot : dataSnapshot.getChildren()){
-                    Staff staff = staffSnapshot.getValue(Staff.class);
-                    staffList.add(staff);
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.i("FireBaseError", "onCancelled: Error in database.");
-            }
-        });
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +36,11 @@ public class Outstanding extends AppCompatActivity {
         outstandingTitleText = findViewById(R.id.outstandingScreenTitle);
         mRecyclerView = findViewById(R.id.outstandingRecyclerView);
 
-        databaseStaff = FirebaseDatabase.getInstance().getReference("staff");
+        staffList = new ArrayList<>();
 
-//        staffList = new ArrayList<>();
         Intent intent = getIntent();
-        staffList = intent.getParcelableArrayListExtra("staff_list");
+        roster = intent.getParcelableExtra(MainActivity.EXTRA_ROSTER);
+        if(roster.getStaffList() != null){ staffList = roster.getStaffList(); }
 
         mLayoutManager = new LinearLayoutManager(this);
         mAdapter = new StaffAdapter(staffList,this);
