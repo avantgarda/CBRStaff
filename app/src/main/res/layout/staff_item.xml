@@ -12,6 +12,35 @@
         android:layout_weight="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
+    <LinearLayout
+        android:id="@+id/cruiseCheckLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cruiseOneCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <CheckBox
+            android:id="@+id/cruiseTwoCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <CheckBox
+            android:id="@+id/cruiseThreeCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/balanceText"
         android:layout_width="wrap_content"

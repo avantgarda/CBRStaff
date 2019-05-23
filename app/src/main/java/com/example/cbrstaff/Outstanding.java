@@ -26,6 +26,8 @@ public class Outstanding extends AppCompatActivity {
     RecyclerView.LayoutManager mLayoutManager;
 
     ArrayList<Staff> mStaff;
+    Currency mCurrency;
+    boolean showCheckboxes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +39,15 @@ public class Outstanding extends AppCompatActivity {
 
         Intent intent = getIntent();
         mStaff = intent.getParcelableArrayListExtra(MainActivity.EXTRA_STAFF);
+        mCurrency = intent.getParcelableExtra(MainActivity.EXTRA_CURRENCY);
+
+        showCheckboxes = true;
+
+        // Came from MainActivity
+        if(mCurrency == null){ showCheckboxes = false; }
 
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new StaffAdapter(mStaff,this);
+        mAdapter = new StaffAdapter(mStaff,this, showCheckboxes);
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);

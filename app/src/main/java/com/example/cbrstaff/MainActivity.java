@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_STAFF = "com.example.cbrstaff.EXTRA_STAFF";
+    public static final String EXTRA_CURRENCY = "com.example.cbrstaff.EXTRA_CURRENCY";
 
     TextView mainTitleText;
     TextView outstandingTipsText;

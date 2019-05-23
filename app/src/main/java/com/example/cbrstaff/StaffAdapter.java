@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,22 +16,32 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
 
     private ArrayList<Staff> mStaffList;
     private Context mContext;
+    private boolean showCheckboxes;
 
-    StaffAdapter(ArrayList<Staff> staffList, Context context){
+    StaffAdapter(ArrayList<Staff> staffList, Context context, boolean showCheck){
         mStaffList = staffList;
         mContext = context;
+        showCheckboxes = showCheck;
     }
 
     static class StaffViewHolder extends RecyclerView.ViewHolder{
 
         TextView nameTextView;
         TextView balanceTextView;
+        LinearLayout cruiseCheck;
+        CheckBox cruiseOne;
+        CheckBox cruiseTwo;
+        CheckBox cruiseThree;
 
         StaffViewHolder(@NonNull View itemView) {
             super(itemView);
 
             nameTextView = itemView.findViewById(R.id.nameText);
             balanceTextView = itemView.findViewById(R.id.balanceText);
+            cruiseCheck = itemView.findViewById(R.id.cruiseCheckLayout);
+            cruiseOne = itemView.findViewById(R.id.cruiseOneCheck);
+            cruiseTwo = itemView.findViewById(R.id.cruiseTwoCheck);
+            cruiseThree = itemView.findViewById(R.id.cruiseThreeCheck);
         }
     }
 
@@ -42,6 +54,8 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
 
     @Override
     public void onBindViewHolder(@NonNull StaffViewHolder staffViewHolder, int i) {
+        if(!showCheckboxes){  staffViewHolder.cruiseCheck.setVisibility(View.GONE); }
+        else { staffViewHolder.balanceTextView.setVisibility(View.GONE); }
         Staff currentStaff = mStaffList.get(i);
         staffViewHolder.nameTextView.setText(currentStaff.getName());
         staffViewHolder.balanceTextView.setText(mContext.getString(R.string.display_euro, currentStaff.getBalance().getEuro()));

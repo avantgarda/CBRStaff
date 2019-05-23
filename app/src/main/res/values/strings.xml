@@ -12,4 +12,5 @@
     <string name="tips_received">Tips Received</string>
     <string name="euro_sign">€</string>
     <string name="dollar_sign">$</string>
+    <string name="cruise_details_confirm">Next</string>
 </resources>
