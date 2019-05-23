@@ -9,4 +9,7 @@
     <string name="display_pound">£%.2f</string>
     <string name="outstanding_title">Outstanding Tips</string>
     <string name="cruise_title">New Cruise</string>
+    <string name="tips_received">Tips Received</string>
+    <string name="euro_sign">€</string>
+    <string name="dollar_sign">$</string>
 </resources>

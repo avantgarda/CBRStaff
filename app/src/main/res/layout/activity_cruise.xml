@@ -37,7 +37,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cruiseTitle">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/decrCruiseButton"
+            android:id="@+id/decreaseCruiseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
@@ -45,7 +45,7 @@
             app:srcCompat="@android:drawable/button_onoff_indicator_on" />
 
         <TextView
-            android:id="@+id/cruiseNumDisp"
+            android:id="@+id/cruiseNumDisplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="40dp"
@@ -53,12 +53,72 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display3" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/incrCruiseButton"
+            android:id="@+id/increaseCruiseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
             app:srcCompat="@android:drawable/ic_input_add" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/totalTipsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/tips_received"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cruiseNumLayout" />
+
+    <LinearLayout
+        android:id="@+id/tipsCurrencyLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/totalTipsTitle">
+
+        <EditText
+            android:id="@+id/euroTips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:ems="4"
+            android:gravity="center_horizontal"
+            android:hint="@string/euro_sign"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            android:maxLength="7"
+            android:textSize="36sp" tools:targetApi="o"/>
+
+        <EditText
+            android:id="@+id/dollarTips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:ems="4"
+            android:gravity="center_horizontal"
+            android:hint="@string/dollar_sign"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            android:maxLength="7"
+            android:textSize="36sp" tools:targetApi="o"/>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
