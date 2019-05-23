@@ -8,4 +8,5 @@
     <string name="display_dollar">$%.2f</string>
     <string name="display_pound">£%.2f</string>
     <string name="outstanding_title">Outstanding Tips</string>
+    <string name="cruise_title">New Cruise</string>
 </resources>

@@ -70,12 +70,10 @@ public class MainActivity extends AppCompatActivity {
         newTipsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addSampleStaff();
-                /*String idFire = databaseWorkDay.push().getKey();
-                // Change Outstanding to new activity class for WorkDay creation
-                Intent intent = new Intent(MainActivity.this, Outstanding.class);
-                intent.putExtra(EXTRA_WORKDAY, idFire);
-                startActivity(intent);*/
+//                addSampleStaff();
+                Intent intent = new Intent(MainActivity.this, Cruise.class);
+                intent.putParcelableArrayListExtra(EXTRA_STAFF, mStaff);
+                startActivity(intent);
             }
         });
 
