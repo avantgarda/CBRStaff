@@ -1,5 +1,6 @@
 package com.example.cbrstaff;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -32,8 +33,6 @@ public class Cruise extends AppCompatActivity {
 
     int numCruises;
 
-    ArrayList<Staff> mStaff;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,22 +55,20 @@ public class Cruise extends AppCompatActivity {
         euroInput.setText("€");
         dollarInput.setText("$");
 
-        Intent intent = getIntent();
-        mStaff = intent.getParcelableArrayListExtra(MainActivity.EXTRA_STAFF);
-
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Cruise.this, Outstanding.class);
-                intent.putParcelableArrayListExtra(MainActivity.EXTRA_STAFF, mStaff);
                 String euro = euroInput.getText().toString().substring(1);
                 String dollar = dollarInput.getText().toString().substring(1);
                 double euroValue = 0, dollarValue = 0;
                 if (!TextUtils.isEmpty(euro)){ euroValue = Double.parseDouble(euro); }
                 if (!TextUtils.isEmpty(dollar)){ dollarValue = Double.parseDouble(dollar); }
                 Currency currency = new Currency(euroValue, dollarValue,0);
-                intent.putExtra(MainActivity.EXTRA_CURRENCY, currency);
-                startActivity(intent);
+                // Return to main activity with result
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra(Outstanding.EXTRA_CURRENCY, currency);
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
             }
         });
 
@@ -87,7 +84,7 @@ public class Cruise extends AppCompatActivity {
         increaseCruise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(numCruises == 3){ return; }
+                if(numCruises == Outstanding.MAX_CRUISES){ return; }
                 numCruises++;
                 cruiseNumText.setText(String.format(Locale.getDefault(),"%d",numCruises));
             }
