@@ -11,7 +11,10 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Adapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -24,11 +27,16 @@ import java.util.ArrayList;
 
 public class Outstanding extends AppCompatActivity {
 
+    public static final String EXTRA_CRUISES = "com.example.cbrstaff.EXTRA_CRUISES";
     public static final String EXTRA_CURRENCY = "com.example.cbrstaff.EXTRA_CURRENCY";
     public static final int MAX_CRUISES = 3;
 
-    TextView outstandingTitleText;
+    LinearLayout tipsLayout;
+    TextView euroText;
+    TextView dollarText;
     RecyclerView mRecyclerView;
+    Button cancelB;
+    Button confirmB;
 
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
@@ -36,35 +44,10 @@ public class Outstanding extends AppCompatActivity {
     ArrayList<Staff> mStaff;
     ArrayList<AdapterItem> mItem;
     Currency mCurrency;
+    int mCruises;
     boolean hideCheckboxes;
 
     DatabaseReference databaseStaff;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        /*databaseStaff.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!mStaff.isEmpty()){ mStaff.clear(); }
-                for(DataSnapshot staffSnapshot : dataSnapshot.getChildren()){
-                    Staff staff = staffSnapshot.getValue(Staff.class);
-                    mStaff.add(staff);
-                }
-                // Update total outstanding balance
-                updateOutstanding();
-                // Refresh list
-                mAdapter.notifyDataSetChanged();
-                Log.i("TESTING", "onDataChange: " + mStaff.size());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.i("FireBaseError", "onCancelled: Error in database.");
-            }
-        });*/
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -72,17 +55,35 @@ public class Outstanding extends AppCompatActivity {
 
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
+                mCruises = data.getIntExtra(EXTRA_CRUISES, 1);
                 mCurrency = data.getParcelableExtra(EXTRA_CURRENCY);
-                hideCheckboxes = false;
 //                Staff newStaff = new Staff("Tim", new Currency(5,2,1));
 //                mStaff.add(newStaff);
 //                mItem.add(new AdapterItem(newStaff, hideCheckboxes));
 //                mStaff.get(0).setName("Peter");
-                for(AdapterItem item : mItem){ item.setHideCheckbox(hideCheckboxes); }
-                mAdapter.notifyDataSetChanged();
+                showRoster();
             }
             else { Log.i("IntentError", "onActivityResult: RESULT_OK not received [" + resultCode + "]"); }
         }
+    }
+
+    private void showRoster() {
+        if(!hideCheckboxes){ return; }
+        hideCheckboxes = false;
+        for(AdapterItem item : mItem){ item.setHideCheckbox(hideCheckboxes); }
+        mAdapter.notifyDataSetChanged();
+        euroText.setText(getString(R.string.display_euro, mCurrency.getEuro()));
+        dollarText.setText(getString(R.string.display_dollar, mCurrency.getDollar()));
+    }
+
+    private void showOutstanding() {
+        if(hideCheckboxes){ return; }
+        hideCheckboxes = true;
+        for(AdapterItem item : mItem){ item.setHideCheckbox(hideCheckboxes); }
+        mAdapter.notifyDataSetChanged();
+        updateOutstanding();
+        euroText.setText(getString(R.string.display_euro, mCurrency.getEuro()));
+        dollarText.setText(getString(R.string.display_dollar, mCurrency.getDollar()));
     }
 
     @Override
@@ -90,20 +91,39 @@ public class Outstanding extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outstanding);
 
-        outstandingTitleText = findViewById(R.id.outstandingScreenTitle);
+        tipsLayout = findViewById(R.id.tipsDisplay);
+        euroText = findViewById(R.id.euroDisplay);
+        dollarText = findViewById(R.id.dollarDisplay);
         mRecyclerView = findViewById(R.id.outstandingRecyclerView);
+        cancelB = findViewById(R.id.cancelButton);
+        confirmB = findViewById(R.id.confirmButton);
 
         databaseStaff = FirebaseDatabase.getInstance().getReference("staff");
 
         mStaff = new ArrayList<>();
         mItem = new ArrayList<>();
+        mCurrency = new Currency();
 
-        outstandingTitleText.setOnClickListener(new View.OnClickListener() {
+        euroText.setText(getString(R.string.display_euro,0.0));
+        dollarText.setText(getString(R.string.display_dollar,0.0));
+
+        tipsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                addSampleStaff();
                 Intent intent = new Intent(Outstanding.this, Cruise.class);
+                if(hideCheckboxes){
+                    for(AdapterItem item : mItem){
+                        item.resetChecked();
+                    }
+                }
                 startActivityForResult(intent,1);
+            }
+        });
+
+        cancelB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOutstanding();
             }
         });
 
@@ -116,11 +136,8 @@ public class Outstanding extends AppCompatActivity {
                     mStaff.add(staff);
                     mItem.add(new AdapterItem(staff, hideCheckboxes));
                 }
-                // Update total outstanding balance
-                updateOutstanding();
-                // Refresh list
-                mAdapter.notifyDataSetChanged();
-                Log.i("TESTING", "onDataChange: " + mStaff.size());
+                // Update total outstanding balance and refresh list
+                showOutstanding();
             }
 
             @Override
@@ -140,11 +157,13 @@ public class Outstanding extends AppCompatActivity {
     }
 
     private void updateOutstanding() {
-        double totalOutstanding = 0;
+        double totalEuro = 0, totalDollar = 0;
         for (Staff staff : mStaff) {
-            totalOutstanding += staff.getBalance().getEuro();
+            totalEuro += staff.getBalance().getEuro();
+            totalDollar += staff.getBalance().getDollar();
         }
-        outstandingTitleText.setText(getString(R.string.display_euro, totalOutstanding));
+        mCurrency.setEuro(totalEuro);
+        mCurrency.setDollar(totalDollar);
     }
 
     private void addSampleStaff() {

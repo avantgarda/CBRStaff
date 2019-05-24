@@ -66,6 +66,7 @@ public class Cruise extends AppCompatActivity {
                 Currency currency = new Currency(euroValue, dollarValue,0);
                 // Return to main activity with result
                 Intent returnIntent = new Intent();
+                returnIntent.putExtra(Outstanding.EXTRA_CRUISES, numCruises);
                 returnIntent.putExtra(Outstanding.EXTRA_CURRENCY, currency);
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();

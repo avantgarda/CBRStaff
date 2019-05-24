@@ -66,9 +66,6 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
             staffViewHolder.balanceTextView.setVisibility(View.GONE);
         }
 
-//        staffViewHolder.cruiseCheck.setVisibility(View.VISIBLE);
-//        staffViewHolder.balanceTextView.setVisibility(View.GONE);
-
         Staff currentStaff = mItem.get(position).getStaff();
         staffViewHolder.nameTextView.setText(currentStaff.getName());
         staffViewHolder.balanceTextView.setText(mContext.getString(R.string.display_euro, currentStaff.getBalance().getEuro()));

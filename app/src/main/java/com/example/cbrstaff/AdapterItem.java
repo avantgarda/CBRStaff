@@ -38,4 +38,8 @@ public class AdapterItem {
     void setHideCheckbox(boolean hideCheckbox) {
         this.hideCheckbox = hideCheckbox;
     }
+
+    void resetChecked() {
+        this.checked = new boolean[Outstanding.MAX_CRUISES];
+    }
 }
