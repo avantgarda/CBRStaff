@@ -13,4 +13,6 @@
     <string name="euro_sign">€</string>
     <string name="dollar_sign">$</string>
     <string name="cruise_details_confirm">Next</string>
+    <string name="edit_cruise_title">Edit Cruise</string>
+    <string name="update_cruise">Update</string>
 </resources>

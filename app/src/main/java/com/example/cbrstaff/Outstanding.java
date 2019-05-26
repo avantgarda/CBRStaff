@@ -29,6 +29,7 @@ public class Outstanding extends AppCompatActivity {
 
     public static final String EXTRA_CRUISES = "com.example.cbrstaff.EXTRA_CRUISES";
     public static final String EXTRA_CURRENCY = "com.example.cbrstaff.EXTRA_CURRENCY";
+    public static final String EXTRA_EDIT = "com.example.cbrstaff.EXTRA_EDIT";
     public static final int MAX_CRUISES = 3;
 
     LinearLayout tipsLayout;
@@ -49,6 +50,8 @@ public class Outstanding extends AppCompatActivity {
 
     DatabaseReference databaseStaff;
 
+    changeView changeView;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -61,27 +64,43 @@ public class Outstanding extends AppCompatActivity {
 //                mStaff.add(newStaff);
 //                mItem.add(new AdapterItem(newStaff, hideCheckboxes));
 //                mStaff.get(0).setName("Peter");
-                showRoster();
+                changeView.showRoster();
             }
             else { Log.i("IntentError", "onActivityResult: RESULT_OK not received [" + resultCode + "]"); }
         }
     }
 
-    private void showRoster() {
-        if(!hideCheckboxes){ return; }
-        hideCheckboxes = false;
-        for(AdapterItem item : mItem){ item.setHideCheckbox(hideCheckboxes); }
-        mAdapter.notifyDataSetChanged();
-        euroText.setText(getString(R.string.display_euro, mCurrency.getEuro()));
-        dollarText.setText(getString(R.string.display_dollar, mCurrency.getDollar()));
+    private interface changeView {
+        void showRoster();
+        void showOutstanding();
     }
 
-    private void showOutstanding() {
-        if(hideCheckboxes){ return; }
-        hideCheckboxes = true;
+    private class changeViewImpl implements changeView {
+
+        @Override
+        public void showRoster() {
+            updateTitle();
+            if(!hideCheckboxes){ return; }
+            hideCheckboxes = false;
+            updateView();
+        }
+
+        @Override
+        public void showOutstanding() {
+            updateOutstanding();
+            updateTitle();
+            if(hideCheckboxes){ return; }
+            hideCheckboxes = true;
+            updateView();
+        }
+    }
+
+    private void updateView() {
         for(AdapterItem item : mItem){ item.setHideCheckbox(hideCheckboxes); }
         mAdapter.notifyDataSetChanged();
-        updateOutstanding();
+    }
+
+    private void updateTitle() {
         euroText.setText(getString(R.string.display_euro, mCurrency.getEuro()));
         dollarText.setText(getString(R.string.display_dollar, mCurrency.getDollar()));
     }
@@ -100,6 +119,8 @@ public class Outstanding extends AppCompatActivity {
 
         databaseStaff = FirebaseDatabase.getInstance().getReference("staff");
 
+        changeView = new changeViewImpl();
+
         mStaff = new ArrayList<>();
         mItem = new ArrayList<>();
         mCurrency = new Currency();
@@ -111,10 +132,11 @@ public class Outstanding extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Outstanding.this, Cruise.class);
-                if(hideCheckboxes){
-                    for(AdapterItem item : mItem){
-                        item.resetChecked();
-                    }
+                if(hideCheckboxes) { for(AdapterItem item : mItem){ item.resetChecked(); }}
+                else {
+                    intent.putExtra(EXTRA_EDIT,true);
+                    intent.putExtra(Outstanding.EXTRA_CRUISES, mCruises);
+                    intent.putExtra(Outstanding.EXTRA_CURRENCY, mCurrency);
                 }
                 startActivityForResult(intent,1);
             }
@@ -123,7 +145,7 @@ public class Outstanding extends AppCompatActivity {
         cancelB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showOutstanding();
+                changeView.showOutstanding();
             }
         });
 
@@ -137,7 +159,7 @@ public class Outstanding extends AppCompatActivity {
                     mItem.add(new AdapterItem(staff, hideCheckboxes));
                 }
                 // Update total outstanding balance and refresh list
-                showOutstanding();
+                changeView.showOutstanding();
             }
 
             @Override
@@ -146,7 +168,7 @@ public class Outstanding extends AppCompatActivity {
             }
         });
 
-        hideCheckboxes = true;
+        hideCheckboxes = false;
 
         mLayoutManager = new LinearLayoutManager(this);
         mAdapter = new StaffAdapter(mItem,this);

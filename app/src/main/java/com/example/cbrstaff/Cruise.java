@@ -2,6 +2,8 @@ package com.example.cbrstaff;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.annotation.ColorInt;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -54,6 +56,19 @@ public class Cruise extends AppCompatActivity {
 
         euroInput.setText("€");
         dollarInput.setText("$");
+
+        // Get intent and change title correspondingly
+        Intent intent = getIntent();
+        if(intent.getBooleanExtra(Outstanding.EXTRA_EDIT,false)){
+            cruiseTitleText.setText(R.string.edit_cruise_title);
+            cruiseTitleText.setTextColor(Color.RED);
+            nextButton.setText(R.string.update_cruise);
+            numCruises = intent.getIntExtra(Outstanding.EXTRA_CRUISES, 1);
+            cruiseNumText.setText(String.format(Locale.getDefault(),"%d",numCruises));
+            Currency currency = intent.getParcelableExtra(Outstanding.EXTRA_CURRENCY);
+            euroInput.setText(getString(R.string.display_euro, currency.getEuro()));
+            dollarInput.setText(getString(R.string.display_dollar, currency.getDollar()));
+        }
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
