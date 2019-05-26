@@ -6,13 +6,17 @@
     <string name="outstanding_none">None Outstanding</string>
     <string name="display_euro">€%.2f</string>
     <string name="display_dollar">$%.2f</string>
-    <string name="display_pound">£%.2f</string>
+    <string name="display_sterling">£%.2f</string>
     <string name="outstanding_title">Outstanding Tips</string>
     <string name="cruise_title">New Cruise</string>
     <string name="tips_received">Tips Received</string>
     <string name="euro_sign">€</string>
     <string name="dollar_sign">$</string>
+    <string name="sterling_sign">£</string>
     <string name="cruise_details_confirm">Next</string>
     <string name="edit_cruise_title">Edit Cruise</string>
     <string name="update_cruise">Update</string>
+    <string name="cancel_symbol">Cancel</string>
+    <string name="confirm_symbol">Confirm</string>
+    <string name="main_screen_loading">Loading&#8230;</string>
 </resources>

@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -35,13 +36,15 @@ public class Outstanding extends AppCompatActivity {
     public static final String EXTRA_EDIT = "com.example.cbrstaff.EXTRA_EDIT";
     public static final int MAX_CRUISES = 3;
 
-    LinearLayout tipsLayout;
+    LinearLayout tipsLayoutOuter;
+    LinearLayout tipsLayoutInner;
     ConstraintLayout buttonContainer;
     TextView euroText;
     TextView dollarText;
+    TextView sterlingText;
     RecyclerView mRecyclerView;
-    Button cancelB;
-    Button confirmB;
+    ImageButton cancelB;
+    ImageButton confirmB;
 
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
@@ -66,10 +69,6 @@ public class Outstanding extends AppCompatActivity {
                 prevCruises = mCruises;
                 mCruises = data.getIntExtra(EXTRA_CRUISES, 1);
                 mCurrency = data.getParcelableExtra(EXTRA_CURRENCY);
-//                Staff newStaff = new Staff("Tim", new Currency(5,2,1));
-//                mStaff.add(newStaff);
-//                mItem.add(new AdapterItem(newStaff, hideCheckboxes));
-//                mStaff.get(0).setName("Peter");
                 changeView.showRoster();
             }
             else { Log.i("IntentError", "onActivityResult: RESULT_OK not received [" + resultCode + "]"); }
@@ -79,6 +78,7 @@ public class Outstanding extends AppCompatActivity {
     private interface changeView {
         void showRoster();
         void showOutstanding();
+        void refresh();
     }
 
     private class changeViewImpl implements changeView {
@@ -99,6 +99,13 @@ public class Outstanding extends AppCompatActivity {
             hideCheckboxes = true;
             updateView();
         }
+
+        @Override
+        public void refresh() {
+            if(hideCheckboxes){ updateOutstanding(); }
+            updateTitle();
+            updateView();
+        }
     }
 
     private void updateView() {
@@ -115,6 +122,7 @@ public class Outstanding extends AppCompatActivity {
     private void updateTitle() {
         euroText.setText(getString(R.string.display_euro, mCurrency.getEuro()));
         dollarText.setText(getString(R.string.display_dollar, mCurrency.getDollar()));
+        sterlingText.setText(getString(R.string.display_sterling, mCurrency.getSterling()));
     }
 
     @Override
@@ -122,10 +130,12 @@ public class Outstanding extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outstanding);
 
-        tipsLayout = findViewById(R.id.tipsDisplay);
+        tipsLayoutOuter = findViewById(R.id.tipsDisplayOuter);
+        tipsLayoutInner = findViewById(R.id.tipsDisplayInner);
         buttonContainer = findViewById(R.id.buttonLayout);
         euroText = findViewById(R.id.euroDisplay);
         dollarText = findViewById(R.id.dollarDisplay);
+        sterlingText = findViewById(R.id.sterlingDisplay);
         mRecyclerView = findViewById(R.id.outstandingRecyclerView);
         cancelB = findViewById(R.id.cancelButton);
         confirmB = findViewById(R.id.confirmButton);
@@ -142,10 +152,11 @@ public class Outstanding extends AppCompatActivity {
         mCruises = 1;
         prevCruises = 1;
 
-        euroText.setText(getString(R.string.display_euro,0.0));
-        dollarText.setText(getString(R.string.display_dollar,0.0));
+        euroText.setText(getString(R.string.main_screen_loading));
 
-        tipsLayout.setOnClickListener(new View.OnClickListener() {
+        buttonContainer.setVisibility(View.GONE);
+
+        tipsLayoutOuter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Outstanding.this, Cruise.class);
@@ -169,22 +180,49 @@ public class Outstanding extends AppCompatActivity {
         confirmB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideCheckboxes = true;
                 calculateTips();
             }
         });
 
+//        confirmB.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                addSampleStaff();
+//            }
+//        });
+
         databaseStaff.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!mStaff.isEmpty()){ mStaff.clear(); mItem.clear(); mKeys.clear(); }
+
+                ArrayList<AdapterItem> tempItem = new ArrayList<>();
+                ArrayList<String> tempKey = new ArrayList<>();
+
+                if(!mStaff.isEmpty()){ mStaff.clear(); }
                 for(DataSnapshot staffSnapshot : dataSnapshot.getChildren()){
                     Staff staff = staffSnapshot.getValue(Staff.class);
                     mStaff.add(staff);
-                    mItem.add(new AdapterItem(staff, hideCheckboxes));
-                    mKeys.add(staffSnapshot.getKey());
+                    tempKey.add(staffSnapshot.getKey());
                 }
+
+                for(int x = 0; x < mStaff.size(); x++){
+                    boolean flag = false;
+                    int y = 0;
+                    while(y < mKeys.size()){
+                        if(tempKey.get(x).equals(mKeys.get(y++))){ flag = true; break; }
+                    }
+                    if(flag && (y > 0)) { tempItem.add(new AdapterItem(mStaff.get(x), hideCheckboxes, mItem.get(y - 1).getChecked())); }
+                    else { tempItem.add(new AdapterItem(mStaff.get(x), hideCheckboxes)); }
+                }
+
+                mItem.clear();
+                mKeys.clear();
+                mItem.addAll(tempItem);
+                mKeys.addAll(tempKey);
+
                 // Update total outstanding balance and refresh list
-                changeView.showOutstanding();
+                changeView.refresh();
             }
 
             @Override
@@ -193,7 +231,7 @@ public class Outstanding extends AppCompatActivity {
             }
         });
 
-        hideCheckboxes = false;
+        hideCheckboxes = true;
 
         mLayoutManager = new LinearLayoutManager(this);
         mAdapter = new StaffAdapter(mItem,this);
@@ -201,11 +239,11 @@ public class Outstanding extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
+        buttonContainer.bringToFront();
     }
 
     private void calculateTips() {
-
-        if(hideCheckboxes){ changeView.showOutstanding(); return; }
 
         int staffCount = 0, index = 0;
         Map<String, Staff> updatedStaff = new HashMap<>();
@@ -215,7 +253,7 @@ public class Outstanding extends AppCompatActivity {
                 if(item.getChecked()[cruise]){ staffCount++; }
             }
         }
-        if(staffCount == 0){ changeView.showOutstanding(); return; }
+        if(staffCount == 0){ hideCheckboxes = false; changeView.showOutstanding(); return; }
         // Calculate divisions and allocate
         for(AdapterItem item : mItem){
             Currency currency = item.getStaff().getBalance();
@@ -223,6 +261,7 @@ public class Outstanding extends AppCompatActivity {
                 if(item.getChecked()[cruise]) {
                     currency.setEuro(currency.getEuro() + mCurrency.getEuro() / staffCount);
                     currency.setDollar(currency.getDollar() + mCurrency.getDollar() / staffCount);
+                    currency.setSterling(currency.getSterling() + mCurrency.getSterling() / staffCount);
                 }
             }
             // Upload changed item to FireBase
@@ -233,13 +272,15 @@ public class Outstanding extends AppCompatActivity {
     }
 
     private void updateOutstanding() {
-        double totalEuro = 0, totalDollar = 0;
+        double totalEuro = 0, totalDollar = 0, totalSterling = 0;
         for (Staff staff : mStaff) {
             totalEuro += staff.getBalance().getEuro();
             totalDollar += staff.getBalance().getDollar();
+            totalSterling += staff.getBalance().getSterling();
         }
         mCurrency.setEuro(totalEuro);
         mCurrency.setDollar(totalDollar);
+        mCurrency.setSterling(totalSterling);
     }
 
     private void addSampleStaff() {
@@ -250,7 +291,7 @@ public class Outstanding extends AppCompatActivity {
             return;
         }
         Currency newBalance = new Currency(3,4,5);
-        Staff newStaff = new Staff("John", newBalance);
+        Staff newStaff = new Staff("Simon", newBalance);
         databaseStaff.child(idFire).setValue(newStaff);
     }
 }

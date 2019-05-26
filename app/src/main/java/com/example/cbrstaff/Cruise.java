@@ -26,9 +26,11 @@ public class Cruise extends AppCompatActivity {
     FloatingActionButton decreaseCruise;
     FloatingActionButton increaseCruise;
     LinearLayout cruiseNumberLayout;
-    LinearLayout totalTipsLayout;
+    LinearLayout totalTipsLayoutOuter;
+    LinearLayout totalTipsLayoutInner;
     EditText euroInput;
     EditText dollarInput;
+    EditText sterlingInput;
     Button nextButton;
 
     int numCruises;
@@ -44,9 +46,11 @@ public class Cruise extends AppCompatActivity {
         decreaseCruise= findViewById(R.id.decreaseCruiseButton);
         increaseCruise= findViewById(R.id.increaseCruiseButton);
         cruiseNumberLayout = findViewById(R.id.cruiseNumLayout);
-        totalTipsLayout = findViewById(R.id.tipsCurrencyLayout);
+        totalTipsLayoutOuter = findViewById(R.id.tipsCurrencyLayoutOuter);
+        totalTipsLayoutInner = findViewById(R.id.tipsCurrencyLayoutInner);
         euroInput = findViewById(R.id.euroTips);
         dollarInput = findViewById(R.id.dollarTips);
+        sterlingInput = findViewById(R.id.sterlingTips);
         nextButton = findViewById(R.id.cruiseDetailsNext);
 
         numCruises = 1;
@@ -54,6 +58,7 @@ public class Cruise extends AppCompatActivity {
 
         euroInput.setText("€");
         dollarInput.setText("$");
+        sterlingInput.setText("£");
 
         // Get intent and change title correspondingly
         Intent intent = getIntent();
@@ -66,6 +71,7 @@ public class Cruise extends AppCompatActivity {
             Currency currency = intent.getParcelableExtra(Outstanding.EXTRA_CURRENCY);
             euroInput.setText(getString(R.string.display_euro, currency.getEuro()));
             dollarInput.setText(getString(R.string.display_dollar, currency.getDollar()));
+            sterlingInput.setText(getString(R.string.display_sterling, currency.getSterling()));
         }
 
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -73,10 +79,12 @@ public class Cruise extends AppCompatActivity {
             public void onClick(View v) {
                 String euro = euroInput.getText().toString().substring(1);
                 String dollar = dollarInput.getText().toString().substring(1);
-                double euroValue = 0, dollarValue = 0;
+                String sterling = sterlingInput.getText().toString().substring(1);
+                double euroValue = 0, dollarValue = 0, sterlingValue = 0;
                 if (!TextUtils.isEmpty(euro)){ euroValue = Double.parseDouble(euro); }
                 if (!TextUtils.isEmpty(dollar)){ dollarValue = Double.parseDouble(dollar); }
-                Currency currency = new Currency(euroValue, dollarValue,0);
+                if (!TextUtils.isEmpty(sterling)){ sterlingValue = Double.parseDouble(sterling); }
+                Currency currency = new Currency(euroValue, dollarValue, sterlingValue);
                 // Return to main activity with result
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra(Outstanding.EXTRA_CRUISES, numCruises);
@@ -106,6 +114,7 @@ public class Cruise extends AppCompatActivity {
 
         Selection.setSelection(euroInput.getText(), euroInput.getText().length());
         Selection.setSelection(dollarInput.getText(), dollarInput.getText().length());
+        Selection.setSelection(sterlingInput.getText(), sterlingInput.getText().length());
 
         euroInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -143,6 +152,26 @@ public class Cruise extends AppCompatActivity {
                 if(!s.toString().startsWith("$")){
                     dollarInput.setText("$");
                     Selection.setSelection(dollarInput.getText(), dollarInput.getText().length());
+                }
+            }
+        });
+
+        sterlingInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!s.toString().startsWith("£")){
+                    sterlingInput.setText("£");
+                    Selection.setSelection(sterlingInput.getText(), sterlingInput.getText().length());
                 }
             }
         });

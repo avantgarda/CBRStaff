@@ -7,21 +7,21 @@ public class Currency implements Parcelable {
 
     private double euro;
     private double dollar;
-    private double pound;
+    private double sterling;
 
-    public Currency() {
+    Currency() {
     }
 
-    Currency(double euro, double dollar, double pound) {
+    Currency(double euro, double dollar, double sterling) {
         this.euro = euro;
         this.dollar = dollar;
-        this.pound = pound;
+        this.sterling = sterling;
     }
 
     private Currency(Parcel in) {
         euro = in.readDouble();
         dollar = in.readDouble();
-        pound = in.readDouble();
+        sterling = in.readDouble();
     }
 
     public static final Creator<Currency> CREATOR = new Creator<Currency>() {
@@ -40,24 +40,24 @@ public class Currency implements Parcelable {
         return euro;
     }
 
-    public void setEuro(double euro) {
+    void setEuro(double euro) {
         this.euro = euro;
     }
 
-    public double getDollar() {
+    double getDollar() {
         return dollar;
     }
 
-    public void setDollar(double dollar) {
+    void setDollar(double dollar) {
         this.dollar = dollar;
     }
 
-    public double getPound() {
-        return pound;
+    double getSterling() {
+        return sterling;
     }
 
-    public void setPound(double pound) {
-        this.pound = pound;
+    void setSterling(double sterling) {
+        this.sterling = sterling;
     }
 
     @Override
@@ -69,6 +69,6 @@ public class Currency implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeDouble(euro);
         dest.writeDouble(dollar);
-        dest.writeDouble(pound);
+        dest.writeDouble(sterling);
     }
 }

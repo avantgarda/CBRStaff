@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
+        <ImageButton
             android:id="@+id/cancelButton"
             android:layout_width="64dp"
             android:layout_height="64dp"
@@ -25,12 +25,14 @@
             android:layout_marginBottom="32dp"
             android:background="#E91E63"
             android:clickable="true"
+            android:contentDescription="@string/cancel_symbol"
             android:focusable="true"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <ImageButton
             android:id="@+id/confirmButton"
             android:layout_width="64dp"
             android:layout_height="64dp"
@@ -40,7 +42,9 @@
             android:layout_marginBottom="32dp"
             android:background="#4CAF50"
             android:clickable="true"
+            android:contentDescription="@string/confirm_symbol"
             android:focusable="true"
+            android:src="@android:drawable/ic_menu_save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -57,13 +61,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tipsDisplay" />
+        app:layout_constraintTop_toBottomOf="@+id/tipsDisplayOuter" />
 
     <LinearLayout
-        android:id="@+id/tipsDisplay"
+        android:id="@+id/tipsDisplayOuter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -71,7 +75,8 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -82,15 +87,33 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="#000000" />
 
-        <TextView
-            android:id="@+id/dollarDisplay"
+        <LinearLayout
+            android:id="@+id/tipsDisplayInner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dollarDisplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+            <TextView
+                android:id="@+id/sterlingDisplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

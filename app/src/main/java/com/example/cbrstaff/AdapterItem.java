@@ -8,7 +8,7 @@ public class AdapterItem {
     private boolean[] checked;
     private boolean[] hideCheckbox;
 
-    public AdapterItem() {
+    AdapterItem() {
     }
 
     AdapterItem(Staff staff, boolean hideCheckboxes) {
@@ -16,6 +16,13 @@ public class AdapterItem {
         this.hideCheckbox = new boolean[Outstanding.MAX_CRUISES];
         if(hideCheckboxes){ Arrays.fill(hideCheckbox, Boolean.TRUE); }
         this.checked = new boolean[Outstanding.MAX_CRUISES];
+    }
+
+    AdapterItem(Staff staff, boolean hideCheckboxes, boolean[] checked) {
+        this.staff = staff;
+        this.hideCheckbox = new boolean[Outstanding.MAX_CRUISES];
+        if(hideCheckboxes){ Arrays.fill(hideCheckbox, Boolean.TRUE); }
+        this.checked = checked;
     }
 
     Staff getStaff() {
