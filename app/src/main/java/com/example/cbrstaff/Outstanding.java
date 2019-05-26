@@ -5,14 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,6 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Outstanding extends AppCompatActivity {
 
@@ -33,6 +36,7 @@ public class Outstanding extends AppCompatActivity {
     public static final int MAX_CRUISES = 3;
 
     LinearLayout tipsLayout;
+    ConstraintLayout buttonContainer;
     TextView euroText;
     TextView dollarText;
     RecyclerView mRecyclerView;
@@ -44,8 +48,9 @@ public class Outstanding extends AppCompatActivity {
 
     ArrayList<Staff> mStaff;
     ArrayList<AdapterItem> mItem;
+    ArrayList<String> mKeys;
     Currency mCurrency;
-    int mCruises;
+    int mCruises, prevCruises;
     boolean hideCheckboxes;
 
     DatabaseReference databaseStaff;
@@ -58,6 +63,7 @@ public class Outstanding extends AppCompatActivity {
 
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
+                prevCruises = mCruises;
                 mCruises = data.getIntExtra(EXTRA_CRUISES, 1);
                 mCurrency = data.getParcelableExtra(EXTRA_CURRENCY);
 //                Staff newStaff = new Staff("Tim", new Currency(5,2,1));
@@ -80,7 +86,7 @@ public class Outstanding extends AppCompatActivity {
         @Override
         public void showRoster() {
             updateTitle();
-            if(!hideCheckboxes){ return; }
+            if(!hideCheckboxes && prevCruises == mCruises){ return; }
             hideCheckboxes = false;
             updateView();
         }
@@ -96,7 +102,13 @@ public class Outstanding extends AppCompatActivity {
     }
 
     private void updateView() {
-        for(AdapterItem item : mItem){ item.setHideCheckbox(hideCheckboxes); }
+        boolean[] temp = new boolean[MAX_CRUISES];
+        if(hideCheckboxes) { buttonContainer.setVisibility(View.GONE); Arrays.fill(temp, Boolean.TRUE); }
+        else {
+            for(int i = 0; i < (MAX_CRUISES - mCruises); i++){ temp[MAX_CRUISES - i - 1] = true; }
+            buttonContainer.setVisibility(View.VISIBLE);
+        }
+        for(AdapterItem item : mItem){ item.setHideCheckbox(temp); }
         mAdapter.notifyDataSetChanged();
     }
 
@@ -111,6 +123,7 @@ public class Outstanding extends AppCompatActivity {
         setContentView(R.layout.activity_outstanding);
 
         tipsLayout = findViewById(R.id.tipsDisplay);
+        buttonContainer = findViewById(R.id.buttonLayout);
         euroText = findViewById(R.id.euroDisplay);
         dollarText = findViewById(R.id.dollarDisplay);
         mRecyclerView = findViewById(R.id.outstandingRecyclerView);
@@ -123,7 +136,11 @@ public class Outstanding extends AppCompatActivity {
 
         mStaff = new ArrayList<>();
         mItem = new ArrayList<>();
+        mKeys = new ArrayList<>();
         mCurrency = new Currency();
+
+        mCruises = 1;
+        prevCruises = 1;
 
         euroText.setText(getString(R.string.display_euro,0.0));
         dollarText.setText(getString(R.string.display_dollar,0.0));
@@ -149,14 +166,22 @@ public class Outstanding extends AppCompatActivity {
             }
         });
 
+        confirmB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateTips();
+            }
+        });
+
         databaseStaff.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!mStaff.isEmpty()){ mStaff.clear(); mItem.clear(); }
+                if(!mStaff.isEmpty()){ mStaff.clear(); mItem.clear(); mKeys.clear(); }
                 for(DataSnapshot staffSnapshot : dataSnapshot.getChildren()){
                     Staff staff = staffSnapshot.getValue(Staff.class);
                     mStaff.add(staff);
                     mItem.add(new AdapterItem(staff, hideCheckboxes));
+                    mKeys.add(staffSnapshot.getKey());
                 }
                 // Update total outstanding balance and refresh list
                 changeView.showOutstanding();
@@ -176,6 +201,35 @@ public class Outstanding extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void calculateTips() {
+
+        if(hideCheckboxes){ changeView.showOutstanding(); return; }
+
+        int staffCount = 0, index = 0;
+        Map<String, Staff> updatedStaff = new HashMap<>();
+        // Count total staff per cruise
+        for(AdapterItem item : mItem){
+            for(int cruise = 0; cruise < mCruises; cruise++){
+                if(item.getChecked()[cruise]){ staffCount++; }
+            }
+        }
+        if(staffCount == 0){ changeView.showOutstanding(); return; }
+        // Calculate divisions and allocate
+        for(AdapterItem item : mItem){
+            Currency currency = item.getStaff().getBalance();
+            for(int cruise = 0; cruise < mCruises; cruise++){
+                if(item.getChecked()[cruise]) {
+                    currency.setEuro(currency.getEuro() + mCurrency.getEuro() / staffCount);
+                    currency.setDollar(currency.getDollar() + mCurrency.getDollar() / staffCount);
+                }
+            }
+            // Upload changed item to FireBase
+            updatedStaff.put(mKeys.get(index++), new Staff(item.getStaff().getName(), currency));
+        }
+        // Push updates to FireBase
+        databaseStaff.setValue(updatedStaff);
     }
 
     private void updateOutstanding() {

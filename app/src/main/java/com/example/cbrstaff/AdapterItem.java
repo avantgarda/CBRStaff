@@ -1,18 +1,21 @@
 package com.example.cbrstaff;
 
+import java.util.Arrays;
+
 public class AdapterItem {
 
     private Staff staff;
     private boolean[] checked;
-    private boolean hideCheckbox;
+    private boolean[] hideCheckbox;
 
     public AdapterItem() {
     }
 
-    AdapterItem(Staff staff, boolean hideCheckbox) {
+    AdapterItem(Staff staff, boolean hideCheckboxes) {
         this.staff = staff;
-        this.hideCheckbox = hideCheckbox;
-        checked = new boolean[Outstanding.MAX_CRUISES];
+        this.hideCheckbox = new boolean[Outstanding.MAX_CRUISES];
+        if(hideCheckboxes){ Arrays.fill(hideCheckbox, Boolean.TRUE); }
+        this.checked = new boolean[Outstanding.MAX_CRUISES];
     }
 
     Staff getStaff() {
@@ -31,15 +34,23 @@ public class AdapterItem {
         this.checked[index] = checked;
     }
 
-    boolean isHideCheckbox() {
-        return hideCheckbox;
+    boolean[] getHideCheckbox() { return hideCheckbox; }
+
+    void setHideCheckbox(boolean[] hideCheckbox) {
+        this.hideCheckbox = hideCheckbox;
     }
 
-    void setHideCheckbox(boolean hideCheckbox) {
-        this.hideCheckbox = hideCheckbox;
+    boolean isHideCheckbox(){
+        boolean temp = true;
+        for(boolean box : hideCheckbox){ temp = temp && box; }
+        return temp;
     }
 
     void resetChecked() {
         this.checked = new boolean[Outstanding.MAX_CRUISES];
+    }
+
+    void resetHideCheckbox() {
+        this.hideCheckbox = new boolean[Outstanding.MAX_CRUISES];
     }
 }

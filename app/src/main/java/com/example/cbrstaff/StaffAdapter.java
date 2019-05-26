@@ -3,7 +3,6 @@ package com.example.cbrstaff;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,36 +56,39 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
 
         final int position = i;
 
+        Staff currentStaff = mItem.get(position).getStaff();
+        staffViewHolder.nameTextView.setText(currentStaff.getName());
+
         if(mItem.get(position).isHideCheckbox()) {
             staffViewHolder.cruiseCheck.setVisibility(View.GONE);
             staffViewHolder.balanceTextView.setVisibility(View.VISIBLE);
+            staffViewHolder.balanceTextView.setText(mContext.getString(R.string.display_euro, currentStaff.getBalance().getEuro()));
         }
         else {
             staffViewHolder.cruiseCheck.setVisibility(View.VISIBLE);
             staffViewHolder.balanceTextView.setVisibility(View.GONE);
-        }
 
-        Staff currentStaff = mItem.get(position).getStaff();
-        staffViewHolder.nameTextView.setText(currentStaff.getName());
-        staffViewHolder.balanceTextView.setText(mContext.getString(R.string.display_euro, currentStaff.getBalance().getEuro()));
+            // Loop through all checkboxes in view and set up state saving
+            for (int check = 0; check < staffViewHolder.cruiseCheck.getChildCount(); check++) {
+                // Declare index as final
+                final int index = check;
+                CheckBox v = (CheckBox) staffViewHolder.cruiseCheck.getChildAt(index);
+                // Check if visible
+                if(mItem.get(position).getHideCheckbox()[index]){ v.setVisibility(View.GONE); continue; }
+                else { v.setVisibility(View.VISIBLE); }
+                //in some cases, it will prevent unwanted situations
+                v.setOnCheckedChangeListener(null);
+                //if true, your checkbox will be selected, else unselected
+                v.setChecked(mItem.get(position).getChecked()[index]);
 
-        // Loop through all checkboxes in view and set up state saving
-        for(int check = 0; check < staffViewHolder.cruiseCheck.getChildCount(); check++){
-            // Declare index as final
-            final int index = check;
-            CheckBox v = (CheckBox) staffViewHolder.cruiseCheck.getChildAt(index);
-            //in some cases, it will prevent unwanted situations
-            v.setOnCheckedChangeListener(null);
-            //if true, your checkbox will be selected, else unselected
-            v.setChecked(mItem.get(position).getChecked()[index]);
-
-            v.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //set your object's last status
-                    mItem.get(position).setChecked(index, isChecked);
-                }
-            });
+                v.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        //set your object's last status
+                        mItem.get(position).setChecked(index, isChecked);
+                    }
+                });
+            }
         }
     }
 
