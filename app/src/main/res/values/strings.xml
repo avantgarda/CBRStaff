@@ -19,4 +19,9 @@
     <string name="cancel_symbol">Cancel</string>
     <string name="confirm_symbol">Confirm</string>
     <string name="main_screen_loading">Loading&#8230;</string>
+    <string name="exchange_title">Currency Exchange</string>
+    <string name="dollar_exchange_title">Dollar</string>
+    <string name="sterling_exchange_title">Sterling</string>
+    <string name="exchange_arrow">Right Arrow</string>
+    <string name="exchange_button_text">Exchange</string>
 </resources>

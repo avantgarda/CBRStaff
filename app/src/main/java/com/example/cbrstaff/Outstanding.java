@@ -34,6 +34,8 @@ public class Outstanding extends AppCompatActivity {
     public static final String EXTRA_CRUISES = "com.example.cbrstaff.EXTRA_CRUISES";
     public static final String EXTRA_CURRENCY = "com.example.cbrstaff.EXTRA_CURRENCY";
     public static final String EXTRA_EDIT = "com.example.cbrstaff.EXTRA_EDIT";
+    public static final int RESULT_CRUISE = 1;
+    public static final int RESULT_EXCHANGE = 2;
     public static final int MAX_CRUISES = 3;
 
     LinearLayout tipsLayoutOuter;
@@ -64,12 +66,19 @@ public class Outstanding extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1) {
+        if (requestCode == RESULT_CRUISE) {
             if(resultCode == Activity.RESULT_OK){
                 prevCruises = mCruises;
-                mCruises = data.getIntExtra(EXTRA_CRUISES, 1);
+                mCruises = data.getIntExtra(EXTRA_CRUISES, RESULT_CRUISE);
                 mCurrency = data.getParcelableExtra(EXTRA_CURRENCY);
                 changeView.showRoster();
+            }
+            else { Log.i("IntentError", "onActivityResult: RESULT_OK not received [" + resultCode + "]"); }
+        }
+        else if (requestCode == RESULT_EXCHANGE) {
+            if(resultCode == Activity.RESULT_OK){
+                Currency updatedCurrency = data.getParcelableExtra(EXTRA_CURRENCY);
+//                changeView.showRoster();
             }
             else { Log.i("IntentError", "onActivityResult: RESULT_OK not received [" + resultCode + "]"); }
         }
@@ -166,16 +175,27 @@ public class Outstanding extends AppCompatActivity {
                     intent.putExtra(Outstanding.EXTRA_CRUISES, mCruises);
                     intent.putExtra(Outstanding.EXTRA_CURRENCY, mCurrency);
                 }
-                startActivityForResult(intent,1);
+                startActivityForResult(intent, RESULT_CRUISE);
             }
         });
 
-        cancelB.setOnClickListener(new View.OnClickListener() {
+        tipsLayoutOuter.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-                changeView.showOutstanding();
+            public boolean onLongClick(View v) {
+                // Start currency exchange dialog
+                Intent intent = new Intent(Outstanding.this, Exchange.class);
+                intent.putExtra(Outstanding.EXTRA_CURRENCY, mCurrency);
+                startActivityForResult(intent, RESULT_EXCHANGE);
+                return true;
             }
         });
+
+//        cancelB.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                changeView.showOutstanding();
+//            }
+//        });
 
         confirmB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,12 +205,12 @@ public class Outstanding extends AppCompatActivity {
             }
         });
 
-//        confirmB.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                addSampleStaff();
-//            }
-//        });
+        confirmB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addSampleStaff();
+            }
+        });
 
         databaseStaff.addValueEventListener(new ValueEventListener() {
             @Override
