@@ -33,6 +33,7 @@ public class Outstanding extends AppCompatActivity {
 
     public static final String EXTRA_CRUISES = "com.example.cbrstaff.EXTRA_CRUISES";
     public static final String EXTRA_CURRENCY = "com.example.cbrstaff.EXTRA_CURRENCY";
+    public static final String EXTRA_CURRENCY_MORE = "com.example.cbrstaff.EXTRA_CURRENCY_MORE";
     public static final String EXTRA_EDIT = "com.example.cbrstaff.EXTRA_EDIT";
     public static final int RESULT_CRUISE = 1;
     public static final int RESULT_EXCHANGE = 2;
@@ -73,14 +74,39 @@ public class Outstanding extends AppCompatActivity {
                 mCurrency = data.getParcelableExtra(EXTRA_CURRENCY);
                 changeView.showRoster();
             }
-            else { Log.i("IntentError", "onActivityResult: RESULT_OK not received [" + resultCode + "]"); }
+            else { Log.i("IntentError", "onActivityResult: RESULT_OK (CRUISE) not received [" + resultCode + "]"); }
         }
         else if (requestCode == RESULT_EXCHANGE) {
             if(resultCode == Activity.RESULT_OK){
-                Currency updatedCurrency = data.getParcelableExtra(EXTRA_CURRENCY);
-//                changeView.showRoster();
+                Currency updatedExchange = data.getParcelableExtra(EXTRA_CURRENCY);
+                Currency updatedEuro = data.getParcelableExtra(EXTRA_CURRENCY_MORE);
+
+                Map<String, Staff> updatedStaff = new HashMap<>();
+                int index = 0;
+
+                // Calculate exchanges and allocate
+                for(Staff staff : mStaff){
+                    double staffEuro = staff.getBalance().getEuro();
+                    double staffDollar = staff.getBalance().getDollar();
+                    double staffSterling = staff.getBalance().getSterling();
+                    if(staffDollar > 0){
+                        double dollarFraction = staffDollar / mCurrency.getDollar();
+                        staffDollar -= updatedExchange.getDollar() * dollarFraction;
+                        staffEuro += updatedEuro.getDollar() * dollarFraction;
+                    }
+                    if(staffSterling > 0){
+                        double sterlingFraction = staffSterling / mCurrency.getSterling();
+                        staffSterling -= updatedExchange.getSterling() * sterlingFraction;
+                        staffEuro += updatedEuro.getSterling() * sterlingFraction;
+                    }
+
+                    // Put updated staff into FireBase array
+                    updatedStaff.put(mKeys.get(index++), new Staff(staff.getName(), new Currency(staffEuro, staffDollar, staffSterling)));
+                }
+                // Push updates to FireBase
+                databaseStaff.setValue(updatedStaff);
             }
-            else { Log.i("IntentError", "onActivityResult: RESULT_OK not received [" + resultCode + "]"); }
+            else { Log.i("IntentError", "onActivityResult: RESULT_OK (EXCHANGE) not received [" + resultCode + "]"); }
         }
     }
 
@@ -168,6 +194,7 @@ public class Outstanding extends AppCompatActivity {
         tipsLayoutOuter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                if(mStaff.size() == 0){ return; }
                 Intent intent = new Intent(Outstanding.this, Cruise.class);
                 if(hideCheckboxes) { for(AdapterItem item : mItem){ item.resetChecked(); }}
                 else {
@@ -182,6 +209,7 @@ public class Outstanding extends AppCompatActivity {
         tipsLayoutOuter.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                if(!hideCheckboxes || (mCurrency.getSterling() == 0 && mCurrency.getDollar() == 0)){ return true; }
                 // Start currency exchange dialog
                 Intent intent = new Intent(Outstanding.this, Exchange.class);
                 intent.putExtra(Outstanding.EXTRA_CURRENCY, mCurrency);
@@ -190,12 +218,12 @@ public class Outstanding extends AppCompatActivity {
             }
         });
 
-//        cancelB.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                changeView.showOutstanding();
-//            }
-//        });
+        cancelB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeView.showOutstanding();
+            }
+        });
 
         confirmB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,12 +233,12 @@ public class Outstanding extends AppCompatActivity {
             }
         });
 
-        confirmB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addSampleStaff();
-            }
-        });
+//        confirmB.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                addSampleStaff();
+//            }
+//        });
 
         databaseStaff.addValueEventListener(new ValueEventListener() {
             @Override

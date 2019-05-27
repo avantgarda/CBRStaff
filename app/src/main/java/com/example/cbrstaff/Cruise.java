@@ -10,7 +10,9 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -112,68 +114,38 @@ public class Cruise extends AppCompatActivity {
             }
         });
 
-        Selection.setSelection(euroInput.getText(), euroInput.getText().length());
-        Selection.setSelection(dollarInput.getText(), dollarInput.getText().length());
-        Selection.setSelection(sterlingInput.getText(), sterlingInput.getText().length());
+        textListenerSetup(totalTipsLayoutOuter);
+    }
 
-        euroInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    private void textListenerSetup(ViewGroup view) {
+        for(int i = 0; i < view.getChildCount(); i++){
+            View v = view.getChildAt(i);
+            if(v instanceof ViewGroup){ textListenerSetup((ViewGroup)v); }
+            else if(v instanceof EditText){
+                final EditText vText = (EditText)v;
+                vText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        String temp = s.toString();
+                        if (!temp.startsWith("$") &&
+                            !temp.startsWith("£") &&
+                            !temp.startsWith("€")) {
+                            vText.setText(vText.getHint());
+                            Selection.setSelection(vText.getText(), vText.getText().length());
+                        }
+                    }
+                });
             }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(!s.toString().startsWith("€")){
-                    euroInput.setText("€");
-                    Selection.setSelection(euroInput.getText(), euroInput.getText().length());
-                }
-            }
-        });
-
-        dollarInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(!s.toString().startsWith("$")){
-                    dollarInput.setText("$");
-                    Selection.setSelection(dollarInput.getText(), dollarInput.getText().length());
-                }
-            }
-        });
-
-        sterlingInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(!s.toString().startsWith("£")){
-                    sterlingInput.setText("£");
-                    Selection.setSelection(sterlingInput.getText(), sterlingInput.getText().length());
-                }
-            }
-        });
+        }
     }
 }
