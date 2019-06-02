@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -12,10 +13,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.text.Selection;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -344,9 +354,79 @@ public class Outstanding extends AppCompatActivity {
         mCurrency.setSterling(totalSterling);
     }
 
+    public void payBalance(final String name){
+
+        Currency tempCurrency = new Currency();
+        String tempKey = "";
+        int index = 0;
+        for(Staff currentStaff : mStaff){
+            if(currentStaff.getName().equals(name)){
+                tempCurrency = currentStaff.getBalance();
+                tempKey = mKeys.get(index);
+                break;
+            }
+            index++;
+        }
+
+        final String key = tempKey;
+        final Currency currency = tempCurrency;
+
+        final EditText editText = new EditText(this);
+
+        editText.setEms(4);
+        editText.setHint(R.string.euro_sign);
+        editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+        editText.setTextSize(TypedValue.COMPLEX_UNIT_SP,36);
+        editText.setGravity(Gravity.CENTER_HORIZONTAL);
+        editText.setPadding(32,20,32,20);
+        InputFilter[] filterArray = new InputFilter[1];
+        filterArray[0] = new InputFilter.LengthFilter(7);
+        editText.setFilters(filterArray);
+        editText.setText(getString(R.string.display_euro, currency.getEuro()));
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String temp = s.toString();
+                if (!temp.startsWith("€")) {
+                    editText.setText(editText.getHint());
+                    Selection.setSelection(editText.getText(), editText.getText().length());
+                }
+            }
+        });
+
+        new AlertDialog.Builder(this)
+            .setTitle(getString(R.string.pay_staff, name))
+            .setView(editText)
+            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    String payAmount = editText.getText().toString().substring(1);
+                    double amount = 0;
+                    if (!TextUtils.isEmpty(payAmount)){ amount = Double.parseDouble(payAmount); }
+                    double newBalance = currency.getEuro() - amount;
+                    if((amount > 0) && (newBalance >= 0)) {
+                        currency.setEuro(newBalance);
+                        databaseStaff.child(key).setValue(new Staff(name, currency));
+                        Toast.makeText(Outstanding.this, getString(R.string.paid_staff, name, amount), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            })
+            .setNegativeButton(android.R.string.no, null)
+            .show();
+    }
+
     public void deleteStaff(final String name){
         new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.remove_staff, name))
+                .setTitle(getString(R.string.remove_staff, name))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         int index = 0;
@@ -358,7 +438,6 @@ public class Outstanding extends AppCompatActivity {
                             }
                             index++;
                         }
-
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
     }

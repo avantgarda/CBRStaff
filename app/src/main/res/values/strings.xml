@@ -29,4 +29,6 @@
     <string name="new_staff_name">Name</string>
     <string name="remove_staff">Remove %s?</string>
     <string name="removed_staff">Removed %s</string>
+    <string name="paid_staff">Paid %s €%.2f</string>
+    <string name="pay_staff">Pay %s</string>
 </resources>

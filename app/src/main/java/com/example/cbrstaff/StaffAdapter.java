@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -126,6 +127,14 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
                     // Delete staff
                     ((Outstanding) mContext).deleteStaff(currentStaff.getName());
                     return true;
+                }
+            });
+
+            staffViewHolder.balanceTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Pay off staff balance
+                    ((Outstanding) mContext).payBalance(currentStaff.getName());
                 }
             });
         }
