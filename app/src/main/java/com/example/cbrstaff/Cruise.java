@@ -86,6 +86,12 @@ public class Cruise extends AppCompatActivity {
                 if (!TextUtils.isEmpty(euro)){ euroValue = Double.parseDouble(euro); }
                 if (!TextUtils.isEmpty(dollar)){ dollarValue = Double.parseDouble(dollar); }
                 if (!TextUtils.isEmpty(sterling)){ sterlingValue = Double.parseDouble(sterling); }
+                if((euroValue == 0) && (dollarValue == 0) && (sterlingValue == 0)){
+                    euroInput.setTextColor(Color.RED);
+                    dollarInput.setTextColor(Color.RED);
+                    sterlingInput.setTextColor(Color.RED);
+                    return;
+                }
                 Currency currency = new Currency(euroValue, dollarValue, sterlingValue);
                 // Return to main activity with result
                 Intent returnIntent = new Intent();

@@ -89,12 +89,12 @@ public class Outstanding extends AppCompatActivity {
                     double staffEuro = staff.getBalance().getEuro();
                     double staffDollar = staff.getBalance().getDollar();
                     double staffSterling = staff.getBalance().getSterling();
-                    if(staffDollar > 0){
+                    if((staffDollar > 0) && (updatedEuro.getDollar() > 0)){
                         double dollarFraction = staffDollar / mCurrency.getDollar();
                         staffDollar -= updatedExchange.getDollar() * dollarFraction;
                         staffEuro += updatedEuro.getDollar() * dollarFraction;
                     }
-                    if(staffSterling > 0){
+                    if((staffSterling > 0) && (updatedEuro.getSterling() > 0)){
                         double sterlingFraction = staffSterling / mCurrency.getSterling();
                         staffSterling -= updatedExchange.getSterling() * sterlingFraction;
                         staffEuro += updatedEuro.getSterling() * sterlingFraction;
@@ -301,7 +301,7 @@ public class Outstanding extends AppCompatActivity {
                 if(item.getChecked()[cruise]){ staffCount++; }
             }
         }
-        if(staffCount == 0){ hideCheckboxes = false; changeView.showOutstanding(); return; }
+        if(staffCount == 0){ hideCheckboxes = false; return; }
         // Calculate divisions and allocate
         for(AdapterItem item : mItem){
             Currency currency = item.getStaff().getBalance();

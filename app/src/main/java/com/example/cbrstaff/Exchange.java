@@ -90,36 +90,26 @@ public class Exchange extends AppCompatActivity {
                 currencyEuro.setSterling(euroSterlingValue);
                 currencyExchange.setDollar(dollarValue);
                 currencyExchange.setSterling(sterlingValue);
-                boolean errorFlag = false;
-                if(dollarLayoutOuter.getVisibility() == View.VISIBLE) {
-                    if ((mCurrency.getDollar() - dollarValue) < 0) {
-                        dollarAmountText.setTextColor(Color.RED);
-                        errorFlag = true;
-                    } else {
-                        dollarAmountText.setTextColor(Color.BLACK);
-                    }
-                    if (euroDollarValue == 0) {
-                        dollarEuroText.setTextColor(Color.RED);
-                        errorFlag = true;
-                    } else {
-                        dollarEuroText.setTextColor(Color.BLACK);
-                    }
-                }
-                if(sterlingLayoutOuter.getVisibility() == View.VISIBLE) {
-                    if ((mCurrency.getSterling() - sterlingValue) < 0) {
-                        sterlingAmountText.setTextColor(Color.RED);
-                        errorFlag = true;
-                    } else {
-                        sterlingAmountText.setTextColor(Color.BLACK);
-                    }
-                    if (euroSterlingValue == 0) {
-                        sterlingEuroText.setTextColor(Color.RED);
-                        errorFlag = true;
-                    } else {
-                        sterlingEuroText.setTextColor(Color.BLACK);
-                    }
-                }
-                if(errorFlag){ return; }
+
+                double dollarDiff = mCurrency.getDollar() - dollarValue;
+                double sterlingDiff = mCurrency.getSterling() - sterlingValue;
+
+                boolean euroError, dollarError, sterlingError;
+
+                euroError = (euroDollarValue == 0) && (euroSterlingValue == 0);
+                dollarError = (dollarDiff < 0) && (euroDollarValue > 0);
+                sterlingError = (sterlingDiff < 0) && (euroSterlingValue > 0);
+
+                if(euroError){ dollarEuroText.setTextColor(Color.RED); sterlingEuroText.setTextColor(Color.RED); }
+                else { dollarEuroText.setTextColor(Color.BLACK); sterlingEuroText.setTextColor(Color.BLACK); }
+
+                if(dollarError){ dollarAmountText.setTextColor(Color.RED); }
+                else { dollarAmountText.setTextColor(Color.BLACK); }
+
+                if(sterlingError){ sterlingAmountText.setTextColor(Color.RED); }
+                else { sterlingAmountText.setTextColor(Color.BLACK); }
+
+                if(euroError || dollarError || sterlingError){ return; }
 
                 // Return to main activity with result
                 Intent returnIntent = new Intent();
