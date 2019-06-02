@@ -10,7 +10,6 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -42,9 +41,9 @@ public class Cruise extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cruise);
 
-        cruiseTitleText = findViewById(R.id.cruiseTitle);
+        cruiseTitleText = findViewById(R.id.addStaffTitle);
         cruiseNumText = findViewById(R.id.cruiseNumDisplay);
-        totalTipsText = findViewById(R.id.totalTipsTitle);
+        totalTipsText = findViewById(R.id.staffNameInput);
         decreaseCruise= findViewById(R.id.decreaseCruiseButton);
         increaseCruise= findViewById(R.id.increaseCruiseButton);
         cruiseNumberLayout = findViewById(R.id.cruiseNumLayout);
@@ -53,7 +52,7 @@ public class Cruise extends AppCompatActivity {
         euroInput = findViewById(R.id.euroTips);
         dollarInput = findViewById(R.id.dollarTips);
         sterlingInput = findViewById(R.id.sterlingTips);
-        nextButton = findViewById(R.id.cruiseDetailsNext);
+        nextButton = findViewById(R.id.addStaffButton);
 
         numCruises = 1;
         cruiseNumText.setText(String.format(Locale.getDefault(),"%d",numCruises));

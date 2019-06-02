@@ -35,12 +35,16 @@ public class Outstanding extends AppCompatActivity {
     public static final String EXTRA_CURRENCY = "com.example.cbrstaff.EXTRA_CURRENCY";
     public static final String EXTRA_CURRENCY_MORE = "com.example.cbrstaff.EXTRA_CURRENCY_MORE";
     public static final String EXTRA_EDIT = "com.example.cbrstaff.EXTRA_EDIT";
+    public static final String EXTRA_ITEM = "com.example.cbrstaff.EXTRA_ITEM";
+    public static final String EXTRA_STAFF = "com.example.cbrstaff.EXTRA_STAFF";
     public static final int RESULT_CRUISE = 1;
     public static final int RESULT_EXCHANGE = 2;
+    public static final int RESULT_ADD_STAFF = 3;
     public static final int MAX_CRUISES = 3;
 
     LinearLayout tipsLayoutOuter;
     LinearLayout tipsLayoutInner;
+    LinearLayout listAndButtonLayout;
     ConstraintLayout buttonContainer;
     TextView euroText;
     TextView dollarText;
@@ -108,6 +112,13 @@ public class Outstanding extends AppCompatActivity {
             }
             else { Log.i("IntentError", "onActivityResult: RESULT_OK (EXCHANGE) not received [" + resultCode + "]"); }
         }
+        else if (requestCode == RESULT_ADD_STAFF) {
+            if(resultCode == Activity.RESULT_OK){
+                Staff newStaff = data.getParcelableExtra(EXTRA_STAFF);
+                addStaff(newStaff);
+            }
+            else { Log.i("IntentError", "onActivityResult: RESULT_OK (ADD_STAFF) not received [" + resultCode + "]"); }
+        }
     }
 
     private interface changeView {
@@ -167,6 +178,7 @@ public class Outstanding extends AppCompatActivity {
 
         tipsLayoutOuter = findViewById(R.id.tipsDisplayOuter);
         tipsLayoutInner = findViewById(R.id.tipsDisplayInner);
+        listAndButtonLayout = findViewById(R.id.listAndButtonLayout);
         buttonContainer = findViewById(R.id.buttonLayout);
         euroText = findViewById(R.id.euroDisplay);
         dollarText = findViewById(R.id.dollarDisplay);
@@ -233,13 +245,6 @@ public class Outstanding extends AppCompatActivity {
             }
         });
 
-//        confirmB.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                addSampleStaff();
-//            }
-//        });
-
         databaseStaff.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -268,6 +273,9 @@ public class Outstanding extends AppCompatActivity {
                 mKeys.clear();
                 mItem.addAll(tempItem);
                 mKeys.addAll(tempKey);
+
+                // Add item for addStaffButton
+                mItem.add(new AdapterItem(new Staff("", new Currency()), hideCheckboxes));
 
                 // Update total outstanding balance and refresh list
                 changeView.refresh();
@@ -312,6 +320,8 @@ public class Outstanding extends AppCompatActivity {
                     currency.setSterling(currency.getSterling() + mCurrency.getSterling() / staffCount);
                 }
             }
+            // If current item is addStaffButton
+            if(item.getStaff().getName().isEmpty()){ continue; }
             // Upload changed item to FireBase
             updatedStaff.put(mKeys.get(index++), new Staff(item.getStaff().getName(), currency));
         }
@@ -331,15 +341,13 @@ public class Outstanding extends AppCompatActivity {
         mCurrency.setSterling(totalSterling);
     }
 
-    private void addSampleStaff() {
-        // Add sample Staff instances to FireBase
+    private void addStaff(Staff staff) {
+        // Add new Staff instance to FireBase
         String idFire = databaseStaff.push().getKey();
         if (TextUtils.isEmpty(idFire)){
-            Log.i("FireBaseError", "addSampleStaff: FireBase key could not be generated");
+            Log.i("FireBaseError", "addStaff: FireBase key could not be generated");
             return;
         }
-        Currency newBalance = new Currency(3,4,5);
-        Staff newStaff = new Staff("Simon", newBalance);
-        databaseStaff.child(idFire).setValue(newStaff);
+        databaseStaff.child(idFire).setValue(staff);
     }
 }

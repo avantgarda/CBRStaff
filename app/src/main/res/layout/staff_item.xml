@@ -2,50 +2,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
     android:padding="5dp">
 
-    <TextView
-        android:id="@+id/nameText"
+    <Button
+        android:id="@+id/addStaffButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:text="@string/add_staff_text" />
 
     <LinearLayout
-        android:id="@+id/cruiseCheckLayout"
-        android:layout_width="wrap_content"
+        android:id="@+id/staffDetailsLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="5dp">
 
-        <CheckBox
-            android:id="@+id/cruiseOneCheck"
+        <TextView
+            android:id="@+id/nameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-        <CheckBox
-            android:id="@+id/cruiseTwoCheck"
+        <LinearLayout
+            android:id="@+id/cruiseCheckLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
+            android:gravity="center"
+            android:orientation="horizontal">
 
-        <CheckBox
-            android:id="@+id/cruiseThreeCheck"
+            <CheckBox
+                android:id="@+id/cruiseOneCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+
+            <CheckBox
+                android:id="@+id/cruiseTwoCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+
+            <CheckBox
+                android:id="@+id/cruiseThreeCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/balanceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
+            android:layout_weight="1"
+            android:gravity="end"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/balanceText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="end"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 </LinearLayout>

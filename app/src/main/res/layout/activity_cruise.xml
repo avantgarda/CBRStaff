@@ -7,7 +7,7 @@
     tools:context=".Cruise">
 
     <TextView
-        android:id="@+id/cruiseTitle"
+        android:id="@+id/addStaffTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -34,7 +34,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cruiseTitle">
+        app:layout_constraintTop_toBottomOf="@+id/addStaffTitle">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/decreaseCruiseButton"
@@ -62,7 +62,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/totalTipsTitle"
+        android:id="@+id/staffNameInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -89,7 +89,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/totalTipsTitle">
+        app:layout_constraintTop_toBottomOf="@+id/staffNameInput">
 
         <LinearLayout
             android:id="@+id/tipsCurrencyLayoutInner"
@@ -149,7 +149,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/cruiseDetailsNext"
+        android:id="@+id/addStaffButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
