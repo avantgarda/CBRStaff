@@ -1,11 +1,13 @@
 package com.example.cbrstaff;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -339,6 +342,25 @@ public class Outstanding extends AppCompatActivity {
         mCurrency.setEuro(totalEuro);
         mCurrency.setDollar(totalDollar);
         mCurrency.setSterling(totalSterling);
+    }
+
+    public void deleteStaff(final String name){
+        new AlertDialog.Builder(this)
+                .setMessage(getString(R.string.remove_staff, name))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        int index = 0;
+                        for(Staff currentStaff : mStaff){
+                            if(currentStaff.getName().equals(name)){
+                                databaseStaff.child(mKeys.get(index)).removeValue();
+                                Toast.makeText(Outstanding.this, getString(R.string.removed_staff, name), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            index++;
+                        }
+
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     private void addStaff(Staff staff) {

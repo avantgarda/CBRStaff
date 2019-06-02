@@ -16,8 +16,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import static com.example.cbrstaff.Outstanding.RESULT_CRUISE;
-
 public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHolder> {
 
     private ArrayList<AdapterItem> mItem;
@@ -84,7 +82,7 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
             staffViewHolder.staffDetailsLayout.setVisibility(View.VISIBLE);
             staffViewHolder.addStaffButton.setVisibility(View.GONE);
 
-            Staff currentStaff = mItem.get(position).getStaff();
+            final Staff currentStaff = mItem.get(position).getStaff();
             staffViewHolder.nameTextView.setText(currentStaff.getName());
 
             if (mItem.get(position).isHideCheckbox()) {
@@ -126,7 +124,8 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
                 @Override
                 public boolean onLongClick(View v) {
                     // Delete staff
-                    return false;
+                    ((Outstanding) mContext).deleteStaff(currentStaff.getName());
+                    return true;
                 }
             });
         }

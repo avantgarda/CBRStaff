@@ -27,4 +27,6 @@
     <string name="add_staff_text">New Staff</string>
     <string name="add_staff_title">Add Staff</string>
     <string name="new_staff_name">Name</string>
+    <string name="remove_staff">Remove %s?</string>
+    <string name="removed_staff">Removed %s</string>
 </resources>
