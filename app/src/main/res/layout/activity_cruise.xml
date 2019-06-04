@@ -98,13 +98,29 @@
         app:layout_constraintTop_toBottomOf="@+id/staffNameInput">
 
         <LinearLayout
-            android:id="@+id/tipsCurrencyLayoutInner"
+            android:id="@+id/tipsCurrencyLayoutInnerOne"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/dollarTips"
+                android:id="@+id/euroTipsOne"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:ems="4"
+                android:gravity="center_horizontal"
+                android:hint="@string/euro_sign"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal"
+                android:maxLength="7"
+                android:textSize="64sp"
+                tools:targetApi="o" />
+
+            <EditText
+                android:id="@+id/dollarTipsOne"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -120,7 +136,7 @@
                 tools:targetApi="o" />
 
             <EditText
-                android:id="@+id/sterlingTips"
+                android:id="@+id/sterlingTipsOne"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -136,21 +152,115 @@
                 tools:targetApi="o" />
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/euroTips"
+        <LinearLayout
+            android:id="@+id/tipsCurrencyLayoutInnerTwo"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_weight="1"
-            android:ems="4"
-            android:gravity="center_horizontal"
-            android:hint="@string/euro_sign"
-            android:importantForAutofill="no"
-            android:inputType="numberDecimal"
-            android:maxLength="7"
-            android:textSize="64sp"
-            tools:targetApi="o" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/euroTipsTwo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:ems="4"
+                android:gravity="center_horizontal"
+                android:hint="@string/euro_sign"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal"
+                android:maxLength="7"
+                android:textSize="64sp"
+                tools:targetApi="o" />
+
+            <EditText
+                android:id="@+id/dollarTipsTwo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:ems="4"
+                android:gravity="center_horizontal"
+                android:hint="@string/dollar_sign"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal"
+                android:maxLength="7"
+                android:textSize="64sp"
+                tools:targetApi="o" />
+
+            <EditText
+                android:id="@+id/sterlingTipsTwo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:ems="4"
+                android:gravity="center_horizontal"
+                android:hint="@string/sterling_sign"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal"
+                android:maxLength="7"
+                android:textSize="64sp"
+                tools:targetApi="o" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tipsCurrencyLayoutInnerThree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/euroTipsThree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:ems="4"
+                android:gravity="center_horizontal"
+                android:hint="@string/euro_sign"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal"
+                android:maxLength="7"
+                android:textSize="64sp"
+                tools:targetApi="o" />
+
+            <EditText
+                android:id="@+id/dollarTipsThree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:ems="4"
+                android:gravity="center_horizontal"
+                android:hint="@string/dollar_sign"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal"
+                android:maxLength="7"
+                android:textSize="64sp"
+                tools:targetApi="o" />
+
+            <EditText
+                android:id="@+id/sterlingTipsThree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:ems="4"
+                android:gravity="center_horizontal"
+                android:hint="@string/sterling_sign"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal"
+                android:maxLength="7"
+                android:textSize="64sp"
+                tools:targetApi="o" />
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -77,9 +77,10 @@ public class Outstanding extends AppCompatActivity {
     ArrayList<Staff> mStaff;
     ArrayList<AdapterItem> mItem;
     ArrayList<String> mKeys;
+    ArrayList<Currency> mCurrencies;
     Currency mCurrency;
     int mCruises, prevCruises;
-    boolean hideCheckboxes;
+    boolean hideCheckboxes, isArray;
 
     DatabaseReference databaseStaff;
 
@@ -93,7 +94,8 @@ public class Outstanding extends AppCompatActivity {
             if(resultCode == Activity.RESULT_OK){
                 prevCruises = mCruises;
                 mCruises = data.getIntExtra(EXTRA_CRUISES, RESULT_CRUISE);
-                mCurrency = data.getParcelableExtra(EXTRA_CURRENCY);
+                mCurrencies = data.getParcelableArrayListExtra(EXTRA_CURRENCY);
+                isArray = true;
                 changeView.showRoster();
             }
             else { Log.i("IntentError", "onActivityResult: RESULT_OK (CRUISE) not received [" + resultCode + "]"); }
@@ -157,6 +159,7 @@ public class Outstanding extends AppCompatActivity {
 
         @Override
         public void showOutstanding() {
+            isArray = false;
             updateOutstanding();
             updateTitle();
             if(hideCheckboxes){ return; }
@@ -184,9 +187,20 @@ public class Outstanding extends AppCompatActivity {
     }
 
     private void updateTitle() {
-        euroText.setText(getString(R.string.display_euro, mCurrency.getEuro()));
-        dollarText.setText(getString(R.string.display_dollar, mCurrency.getDollar()));
-        sterlingText.setText(getString(R.string.display_sterling, mCurrency.getSterling()));
+        if(isArray){
+            double euro, dollar, sterling;
+            euro = mCurrencies.get(0).getEuro() + mCurrencies.get(1).getEuro() + mCurrencies.get(2).getEuro();
+            dollar = mCurrencies.get(0).getDollar() + mCurrencies.get(1).getDollar() + mCurrencies.get(2).getDollar();
+            sterling = mCurrencies.get(0).getSterling() + mCurrencies.get(1).getSterling() + mCurrencies.get(2).getSterling();
+            euroText.setText(getString(R.string.display_euro, euro));
+            dollarText.setText(getString(R.string.display_dollar, dollar));
+            sterlingText.setText(getString(R.string.display_sterling, sterling));
+        }
+        else {
+            euroText.setText(getString(R.string.display_euro, mCurrency.getEuro()));
+            dollarText.setText(getString(R.string.display_dollar, mCurrency.getDollar()));
+            sterlingText.setText(getString(R.string.display_sterling, mCurrency.getSterling()));
+        }
     }
 
     @Override
@@ -212,10 +226,13 @@ public class Outstanding extends AppCompatActivity {
         mStaff = new ArrayList<>();
         mItem = new ArrayList<>();
         mKeys = new ArrayList<>();
+        mCurrencies = new ArrayList<>();
         mCurrency = new Currency();
 
         mCruises = 1;
         prevCruises = 1;
+
+        isArray = false;
 
         euroText.setText(getString(R.string.main_screen_loading));
 
@@ -230,7 +247,7 @@ public class Outstanding extends AppCompatActivity {
                 else {
                     intent.putExtra(EXTRA_EDIT,true);
                     intent.putExtra(Outstanding.EXTRA_CRUISES, mCruises);
-                    intent.putExtra(Outstanding.EXTRA_CURRENCY, (Parcelable)mCurrency);
+                    intent.putParcelableArrayListExtra(Outstanding.EXTRA_CURRENCY, mCurrencies);
                 }
                 startActivityForResult(intent, RESULT_CRUISE);
             }
@@ -319,23 +336,30 @@ public class Outstanding extends AppCompatActivity {
 
     private void calculateTips() {
 
-        int staffCount = 0, index = 0;
+        int index = 0;
+        int[] staffCount = {0,0,0};
         Map<String, Staff> updatedStaff = new HashMap<>();
         // Count total staff per cruise
         for(AdapterItem item : mItem){
             for(int cruise = 0; cruise < mCruises; cruise++){
-                if(item.getChecked()[cruise]){ staffCount++; }
+                if(item.getChecked()[cruise]){ staffCount[cruise]++; }
             }
         }
-        if(staffCount == 0){ hideCheckboxes = false; return; }
+        int total = 0;
+        for(int i : staffCount){ if(i > 0){ total++; }}
+        if(total != mCruises){
+            Toast.makeText(getApplicationContext(), "Assign Staff", Toast.LENGTH_SHORT).show();
+            hideCheckboxes = false; return;
+        }
+        isArray = false;
         // Calculate divisions and allocate
         for(AdapterItem item : mItem){
             Currency currency = item.getStaff().getBalance();
             for(int cruise = 0; cruise < mCruises; cruise++){
                 if(item.getChecked()[cruise]) {
-                    currency.setEuro(currency.getEuro() + mCurrency.getEuro() / staffCount);
-                    currency.setDollar(currency.getDollar() + mCurrency.getDollar() / staffCount);
-                    currency.setSterling(currency.getSterling() + mCurrency.getSterling() / staffCount);
+                    currency.setEuro(currency.getEuro() + mCurrencies.get(cruise).getEuro() / staffCount[cruise]);
+                    currency.setDollar(currency.getDollar() + mCurrencies.get(cruise).getDollar() / staffCount[cruise]);
+                    currency.setSterling(currency.getSterling() + mCurrencies.get(cruise).getSterling() / staffCount[cruise]);
                 }
             }
             // If current item is addStaffButton

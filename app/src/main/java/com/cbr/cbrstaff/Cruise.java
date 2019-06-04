@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,6 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class Cruise extends AppCompatActivity {
@@ -29,10 +31,12 @@ public class Cruise extends AppCompatActivity {
     FloatingActionButton increaseCruise;
     LinearLayout cruiseNumberLayout;
     LinearLayout totalTipsLayoutOuter;
-    LinearLayout totalTipsLayoutInner;
-    EditText euroInput;
-    EditText dollarInput;
-    EditText sterlingInput;
+    LinearLayout totalTipsLayoutInnerOne;
+    LinearLayout totalTipsLayoutInnerTwo;
+    LinearLayout totalTipsLayoutInnerThree;
+    EditText euroInputOne, euroInputTwo, euroInputThree;
+    EditText dollarInputOne, dollarInputTwo, dollarInputThree;
+    EditText sterlingInputOne, sterlingInputTwo, sterlingInputThree;
     Button nextButton;
 
     int numCruises;
@@ -49,18 +53,32 @@ public class Cruise extends AppCompatActivity {
         increaseCruise= findViewById(R.id.increaseCruiseButton);
         cruiseNumberLayout = findViewById(R.id.cruiseNumLayout);
         totalTipsLayoutOuter = findViewById(R.id.tipsCurrencyLayoutOuter);
-        totalTipsLayoutInner = findViewById(R.id.tipsCurrencyLayoutInner);
-        euroInput = findViewById(R.id.euroTips);
-        dollarInput = findViewById(R.id.dollarTips);
-        sterlingInput = findViewById(R.id.sterlingTips);
+        totalTipsLayoutInnerOne = findViewById(R.id.tipsCurrencyLayoutInnerOne);
+        totalTipsLayoutInnerTwo = findViewById(R.id.tipsCurrencyLayoutInnerTwo);
+        totalTipsLayoutInnerThree = findViewById(R.id.tipsCurrencyLayoutInnerThree);
+        euroInputOne = findViewById(R.id.euroTipsOne);
+        euroInputTwo = findViewById(R.id.euroTipsTwo);
+        euroInputThree = findViewById(R.id.euroTipsThree);
+        dollarInputOne = findViewById(R.id.dollarTipsOne);
+        dollarInputTwo = findViewById(R.id.dollarTipsTwo);
+        dollarInputThree = findViewById(R.id.dollarTipsThree);
+        sterlingInputOne = findViewById(R.id.sterlingTipsOne);
+        sterlingInputTwo = findViewById(R.id.sterlingTipsTwo);
+        sterlingInputThree = findViewById(R.id.sterlingTipsThree);
         nextButton = findViewById(R.id.addStaffButton);
 
         numCruises = 1;
         cruiseNumText.setText(String.format(Locale.getDefault(),"%d",numCruises));
 
-        euroInput.setText("€");
-        dollarInput.setText("$");
-        sterlingInput.setText("£");
+        euroInputOne.setText("€");
+        euroInputTwo.setText("€");
+        euroInputThree.setText("€");
+        dollarInputOne.setText("$");
+        dollarInputTwo.setText("$");
+        dollarInputThree.setText("$");
+        sterlingInputOne.setText("£");
+        sterlingInputTwo.setText("£");
+        sterlingInputThree.setText("£");
 
         // Get intent and change title correspondingly
         Intent intent = getIntent();
@@ -69,34 +87,99 @@ public class Cruise extends AppCompatActivity {
             cruiseTitleText.setTextColor(Color.RED);
             nextButton.setText(R.string.update_cruise);
             numCruises = intent.getIntExtra(Outstanding.EXTRA_CRUISES, 1);
+            Log.i("HELP", "onCreate: " + numCruises);
             cruiseNumText.setText(String.format(Locale.getDefault(),"%d",numCruises));
-            Currency currency = intent.getParcelableExtra(Outstanding.EXTRA_CURRENCY);
-            euroInput.setText(getString(R.string.display_euro, currency.getEuro()));
-            dollarInput.setText(getString(R.string.display_dollar, currency.getDollar()));
-            sterlingInput.setText(getString(R.string.display_sterling, currency.getSterling()));
+            ArrayList<Currency> currencies = intent.getParcelableArrayListExtra(Outstanding.EXTRA_CURRENCY);
+            euroInputOne.setText(getString(R.string.display_euro, currencies.get(0).getEuro()));
+            euroInputTwo.setText(getString(R.string.display_euro, currencies.get(1).getEuro()));
+            euroInputThree.setText(getString(R.string.display_euro, currencies.get(2).getEuro()));
+            dollarInputOne.setText(getString(R.string.display_dollar, currencies.get(0).getDollar()));
+            dollarInputTwo.setText(getString(R.string.display_dollar, currencies.get(1).getDollar()));
+            dollarInputThree.setText(getString(R.string.display_dollar, currencies.get(2).getDollar()));
+            sterlingInputOne.setText(getString(R.string.display_sterling, currencies.get(0).getSterling()));
+            sterlingInputTwo.setText(getString(R.string.display_sterling, currencies.get(1).getSterling()));
+            sterlingInputThree.setText(getString(R.string.display_sterling, currencies.get(2).getSterling()));
+        }
+
+        if(numCruises == 2){ totalTipsLayoutInnerThree.setVisibility(View.GONE); }
+        else if(numCruises == 1){
+            totalTipsLayoutInnerTwo.setVisibility(View.GONE);
+            totalTipsLayoutInnerThree.setVisibility(View.GONE);
         }
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String euro = euroInput.getText().toString().substring(1);
-                String dollar = dollarInput.getText().toString().substring(1);
-                String sterling = sterlingInput.getText().toString().substring(1);
-                double euroValue = 0, dollarValue = 0, sterlingValue = 0;
-                if (!TextUtils.isEmpty(euro)){ euroValue = Double.parseDouble(euro); }
-                if (!TextUtils.isEmpty(dollar)){ dollarValue = Double.parseDouble(dollar); }
-                if (!TextUtils.isEmpty(sterling)){ sterlingValue = Double.parseDouble(sterling); }
-                if((euroValue == 0) && (dollarValue == 0) && (sterlingValue == 0)){
-                    euroInput.setTextColor(Color.RED);
-                    dollarInput.setTextColor(Color.RED);
-                    sterlingInput.setTextColor(Color.RED);
-                    return;
+                String euroOne = euroInputOne.getText().toString().substring(1);
+                String dollarOne = dollarInputOne.getText().toString().substring(1);
+                String sterlingOne = sterlingInputOne.getText().toString().substring(1);
+                String euroTwo = euroInputTwo.getText().toString().substring(1);
+                String dollarTwo = dollarInputTwo.getText().toString().substring(1);
+                String sterlingTwo = sterlingInputTwo.getText().toString().substring(1);
+                String euroThree = euroInputThree.getText().toString().substring(1);
+                String dollarThree = dollarInputThree.getText().toString().substring(1);
+                String sterlingThree = sterlingInputThree.getText().toString().substring(1);
+                double euroValueOne = 0, dollarValueOne = 0, sterlingValueOne = 0,
+                        euroValueTwo = 0, dollarValueTwo = 0, sterlingValueTwo = 0,
+                        euroValueThree = 0, dollarValueThree = 0, sterlingValueThree = 0;
+                if (!TextUtils.isEmpty(euroOne)){ euroValueOne = Double.parseDouble(euroOne); }
+                if (!TextUtils.isEmpty(dollarOne)){ dollarValueOne = Double.parseDouble(dollarOne); }
+                if (!TextUtils.isEmpty(sterlingOne)){ sterlingValueOne = Double.parseDouble(sterlingOne); }
+                if (!TextUtils.isEmpty(euroTwo)){ euroValueTwo = Double.parseDouble(euroTwo); }
+                if (!TextUtils.isEmpty(dollarTwo)){ dollarValueTwo = Double.parseDouble(dollarTwo); }
+                if (!TextUtils.isEmpty(sterlingTwo)){ sterlingValueTwo = Double.parseDouble(sterlingTwo); }
+                if (!TextUtils.isEmpty(euroThree)){ euroValueThree = Double.parseDouble(euroThree); }
+                if (!TextUtils.isEmpty(dollarThree)){ dollarValueThree = Double.parseDouble(dollarThree); }
+                if (!TextUtils.isEmpty(sterlingThree)){ sterlingValueThree = Double.parseDouble(sterlingThree); }
+                boolean flag = false;
+                if((euroValueOne == 0) && (dollarValueOne == 0) && (sterlingValueOne == 0)){
+                    euroInputOne.setTextColor(Color.RED);
+                    dollarInputOne.setTextColor(Color.RED);
+                    sterlingInputOne.setTextColor(Color.RED);
+                    flag = true;
                 }
-                Currency currency = new Currency(euroValue, dollarValue, sterlingValue);
+                else {
+                    euroInputOne.setTextColor(Color.BLACK);
+                    dollarInputOne.setTextColor(Color.BLACK);
+                    sterlingInputOne.setTextColor(Color.BLACK);
+                }
+                if((numCruises > 1) && (euroValueTwo == 0) && (dollarValueTwo == 0) && (sterlingValueTwo == 0)){
+                    euroInputTwo.setTextColor(Color.RED);
+                    dollarInputTwo.setTextColor(Color.RED);
+                    sterlingInputTwo.setTextColor(Color.RED);
+                    flag = true;
+                }
+                else {
+                    euroInputTwo.setTextColor(Color.BLACK);
+                    dollarInputTwo.setTextColor(Color.BLACK);
+                    sterlingInputTwo.setTextColor(Color.BLACK);
+                }
+                if((numCruises > 2) && (euroValueThree == 0) && (dollarValueThree == 0) && (sterlingValueThree == 0)){
+                    euroInputThree.setTextColor(Color.RED);
+                    dollarInputThree.setTextColor(Color.RED);
+                    sterlingInputThree.setTextColor(Color.RED);
+                    flag = true;
+                }
+                else {
+                    euroInputThree.setTextColor(Color.BLACK);
+                    dollarInputThree.setTextColor(Color.BLACK);
+                    sterlingInputThree.setTextColor(Color.BLACK);
+                }
+                if(flag){ return; }
+                Currency currencyOne, currencyTwo, currencyThree;
+                currencyOne = new Currency(euroValueOne, dollarValueOne, sterlingValueOne);
+                currencyTwo = new Currency(0,0,0);
+                if(numCruises > 1){ currencyTwo = new Currency(euroValueTwo, dollarValueTwo, sterlingValueTwo); }
+                currencyThree = new Currency(0,0,0);
+                if(numCruises > 2){ currencyThree = new Currency(euroValueThree, dollarValueThree, sterlingValueThree); }
+                ArrayList<Currency> currencies = new ArrayList<>();
+                currencies.add(currencyOne);
+                currencies.add(currencyTwo);
+                currencies.add(currencyThree);
                 // Return to main activity with result
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra(Outstanding.EXTRA_CRUISES, numCruises);
-                returnIntent.putExtra(Outstanding.EXTRA_CURRENCY, (Parcelable)currency);
+                returnIntent.putParcelableArrayListExtra(Outstanding.EXTRA_CURRENCY, currencies);
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }
@@ -107,6 +190,9 @@ public class Cruise extends AppCompatActivity {
             public void onClick(View v) {
                 if(numCruises == 1){ return; }
                 numCruises--;
+                Log.i("HELP", "onClick: " + numCruises);
+                if(numCruises == 2){ totalTipsLayoutInnerThree.setVisibility(View.GONE); }
+                else if(numCruises == 1){ totalTipsLayoutInnerTwo.setVisibility(View.GONE); }
                 cruiseNumText.setText(String.format(Locale.getDefault(),"%d",numCruises));
             }
         });
@@ -116,6 +202,9 @@ public class Cruise extends AppCompatActivity {
             public void onClick(View v) {
                 if(numCruises == Outstanding.MAX_CRUISES){ return; }
                 numCruises++;
+                Log.i("HELP", "onClick: " + numCruises);
+                if(numCruises == 2){ totalTipsLayoutInnerTwo.setVisibility(View.VISIBLE); }
+                else if(numCruises == 3){ totalTipsLayoutInnerThree.setVisibility(View.VISIBLE); }
                 cruiseNumText.setText(String.format(Locale.getDefault(),"%d",numCruises));
             }
         });
