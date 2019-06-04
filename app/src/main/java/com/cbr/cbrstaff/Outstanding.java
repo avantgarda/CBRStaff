@@ -26,6 +26,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.webkit.WebSettings;
+import android.widget.Adapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -344,6 +345,13 @@ public class Outstanding extends AppCompatActivity {
         }
         // Push updates to FireBase
         databaseStaff.setValue(updatedStaff);
+    }
+
+    public void toggleBalance(boolean isVisible){
+        // 0 - Visible, 1 - Not Visible
+        AdapterItem toggleItem = new AdapterItem(new Staff("", new Currency((isVisible ? 1 : 0),0,0)), hideCheckboxes);
+        mItem.set((mItem.size() - 1), toggleItem);
+        mAdapter.notifyDataSetChanged();
     }
 
     private void updateOutstanding() {

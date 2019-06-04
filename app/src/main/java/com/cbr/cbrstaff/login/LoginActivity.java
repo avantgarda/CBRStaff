@@ -126,7 +126,9 @@ public class LoginActivity extends AppCompatActivity {
         String welcome = getString(R.string.welcome);
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
         Intent myIntent = new Intent(LoginActivity.this, Outstanding.class);
-        LoginActivity.this.startActivity(myIntent);
+        finish();
+        startActivity(myIntent);
+//        LoginActivity.this.startActivity(myIntent);
 
     }
 

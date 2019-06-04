@@ -66,7 +66,7 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull StaffViewHolder staffViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final StaffViewHolder staffViewHolder, int i) {
 
         final int position = i;
 
@@ -99,8 +99,16 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
                 staffViewHolder.cruiseCheck.setVisibility(View.GONE);
                 staffViewHolder.balanceLayout.setVisibility(View.VISIBLE);
                 staffViewHolder.balanceTextViewEuro.setText(mContext.getString(R.string.display_euro, currentStaff.getBalance().getEuro()));
-                staffViewHolder.balanceTextViewDollar.setText(mContext.getString(R.string.display_dollar, currentStaff.getBalance().getDollar()));
-                staffViewHolder.balanceTextViewSterling.setText(mContext.getString(R.string.display_sterling, currentStaff.getBalance().getSterling()));
+                if(mItem.get(mItem.size() - 1).getStaff().getBalance().getEuro() == 0) {
+                    staffViewHolder.balanceTextViewDollar.setText(mContext.getString(R.string.display_dollar, currentStaff.getBalance().getDollar()));
+                    staffViewHolder.balanceTextViewSterling.setText(mContext.getString(R.string.display_sterling, currentStaff.getBalance().getSterling()));
+                    staffViewHolder.balanceTextViewDollar.setVisibility(View.VISIBLE);
+                    staffViewHolder.balanceTextViewSterling.setVisibility(View.VISIBLE);
+                }
+                else {
+                    staffViewHolder.balanceTextViewDollar.setVisibility(View.GONE);
+                    staffViewHolder.balanceTextViewSterling.setVisibility(View.GONE);
+                }
             } else {
                 staffViewHolder.cruiseCheck.setVisibility(View.VISIBLE);
                 staffViewHolder.balanceLayout.setVisibility(View.GONE);
@@ -146,6 +154,16 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
                 public void onClick(View v) {
                     // Pay off staff balance
                     ((Outstanding) mContext).payBalance(currentStaff.getName());
+                }
+            });
+
+            staffViewHolder.balanceLayout.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // Toggle balance view
+                    boolean isVisible = (staffViewHolder.balanceTextViewDollar.getVisibility() == View.VISIBLE);
+                    ((Outstanding) mContext).toggleBalance(isVisible);
+                    return true;
                 }
             });
         }
