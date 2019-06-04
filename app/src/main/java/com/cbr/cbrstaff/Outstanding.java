@@ -1,18 +1,20 @@
-package com.example.cbrstaff;
+package com.cbr.cbrstaff;
 
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.SnapHelper;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -23,8 +25,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.webkit.WebSettings;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -37,6 +38,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -225,7 +229,7 @@ public class Outstanding extends AppCompatActivity {
                 else {
                     intent.putExtra(EXTRA_EDIT,true);
                     intent.putExtra(Outstanding.EXTRA_CRUISES, mCruises);
-                    intent.putExtra(Outstanding.EXTRA_CURRENCY, mCurrency);
+                    intent.putExtra(Outstanding.EXTRA_CURRENCY, (Parcelable)mCurrency);
                 }
                 startActivityForResult(intent, RESULT_CRUISE);
             }
@@ -237,7 +241,7 @@ public class Outstanding extends AppCompatActivity {
                 if(!hideCheckboxes || (mCurrency.getSterling() == 0 && mCurrency.getDollar() == 0)){ return true; }
                 // Start currency exchange dialog
                 Intent intent = new Intent(Outstanding.this, Exchange.class);
-                intent.putExtra(Outstanding.EXTRA_CURRENCY, mCurrency);
+                intent.putExtra(Outstanding.EXTRA_CURRENCY, (Parcelable)mCurrency);
                 startActivityForResult(intent, RESULT_EXCHANGE);
                 return true;
             }
@@ -288,7 +292,7 @@ public class Outstanding extends AppCompatActivity {
                 mKeys.addAll(tempKey);
 
                 // Add item for addStaffButton
-                mItem.add(new AdapterItem(new Staff("", new Currency()), hideCheckboxes));
+                mItem.add(new AdapterItem(new Staff("", new Currency(0,0,0)), hideCheckboxes));
 
                 // Update total outstanding balance and refresh list
                 changeView.refresh();
@@ -376,7 +380,7 @@ public class Outstanding extends AppCompatActivity {
         editText.setEms(4);
         editText.setHint(R.string.euro_sign);
         editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-        editText.setTextSize(TypedValue.COMPLEX_UNIT_SP,36);
+        editText.setTextSize(TypedValue.COMPLEX_UNIT_SP,64);
         editText.setGravity(Gravity.CENTER_HORIZONTAL);
         editText.setPadding(32,20,32,20);
         InputFilter[] filterArray = new InputFilter[1];
@@ -413,8 +417,9 @@ public class Outstanding extends AppCompatActivity {
                     double amount = 0;
                     if (!TextUtils.isEmpty(payAmount)){ amount = Double.parseDouble(payAmount); }
                     double newBalance = currency.getEuro() - amount;
-                    if((amount > 0) && (newBalance >= 0)) {
+                    if((amount > 0) && (newBalance > (-0.01))) {
                         currency.setEuro(newBalance);
+                        if(Math.abs(newBalance) < 0.01){ currency.setEuro(0); }
                         databaseStaff.child(key).setValue(new Staff(name, currency));
                         Toast.makeText(Outstanding.this, getString(R.string.paid_staff, name, amount), Toast.LENGTH_SHORT).show();
                     }

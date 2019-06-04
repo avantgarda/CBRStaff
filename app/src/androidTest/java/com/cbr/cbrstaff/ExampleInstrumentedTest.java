@@ -1,4 +1,4 @@
-package com.example.cbrstaff;
+package com.cbr.cbrstaff;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

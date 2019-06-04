@@ -1,9 +1,10 @@
-package com.example.cbrstaff;
+package com.cbr.cbrstaff;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -95,7 +96,7 @@ public class Cruise extends AppCompatActivity {
                 // Return to main activity with result
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra(Outstanding.EXTRA_CRUISES, numCruises);
-                returnIntent.putExtra(Outstanding.EXTRA_CURRENCY, currency);
+                returnIntent.putExtra(Outstanding.EXTRA_CURRENCY, (Parcelable)currency);
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }

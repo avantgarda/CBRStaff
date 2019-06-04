@@ -1,15 +1,16 @@
-package com.example.cbrstaff;
+package com.cbr.cbrstaff;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class AdapterItem implements Parcelable {
+public class AdapterItem implements Parcelable, Serializable {
 
-    private Staff staff;
-    private boolean[] checked;
-    private boolean[] hideCheckbox;
+    public Staff staff;
+    public boolean[] checked;
+    public boolean[] hideCheckbox;
 
     AdapterItem() {
     }

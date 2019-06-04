@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#31008477"
     tools:context=".Outstanding">
 
     <LinearLayout
@@ -12,11 +13,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="32dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/listAndButtonLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -28,7 +31,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:textSize="64sp" />
 
         <LinearLayout
             android:id="@+id/tipsDisplayInner"
@@ -42,7 +46,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textSize="48sp" />
 
             <TextView
                 android:id="@+id/sterlingDisplay"
@@ -50,7 +55,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textSize="48sp" />
 
         </LinearLayout>
 
@@ -60,21 +66,18 @@
         android:id="@+id/listAndButtonLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="40dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tipsDisplayOuter">
+        app:layout_constraintTop_toBottomOf="@id/tipsDisplayOuter"
+        tools:layout_editor_absoluteX="10dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/outstandingRecyclerView"
-            android:layout_width="395dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="1"
-            android:padding="10dp">
+            android:layout_weight="1">
 
         </android.support.v7.widget.RecyclerView>
 
@@ -87,8 +90,8 @@
 
             <ImageButton
                 android:id="@+id/cancelButton"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="81dp"
+                android:layout_height="81dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
@@ -104,8 +107,8 @@
 
             <ImageButton
                 android:id="@+id/confirmButton"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="81dp"
+                android:layout_height="81dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
                 android:layout_marginRight="32dp"

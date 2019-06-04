@@ -1,4 +1,4 @@
-package com.example.cbrstaff;
+package com.cbr.cbrstaff;
 
 import org.junit.Test;
 

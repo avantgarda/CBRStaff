@@ -1,12 +1,15 @@
-package com.example.cbrstaff;
+package com.cbr.cbrstaff;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Staff implements Parcelable {
+import java.io.Serializable;
+import java.util.Date;
 
-    private String name;
-    private Currency balance;
+public class Staff implements Parcelable, Serializable {
+
+    public String name;
+    public Currency balance;
 
     public Staff() {
     }

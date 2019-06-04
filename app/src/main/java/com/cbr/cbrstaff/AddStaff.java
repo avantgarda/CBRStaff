@@ -1,9 +1,10 @@
-package com.example.cbrstaff;
+package com.cbr.cbrstaff;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -46,7 +47,7 @@ public class AddStaff extends AppCompatActivity {
                 }
                 else{
                     // Add staff
-                    intent.putExtra(Outstanding.EXTRA_STAFF, new Staff(name, new Currency()));
+                    intent.putExtra(Outstanding.EXTRA_STAFF, (Parcelable)new Staff(name, new Currency()));
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
                     setResult(Activity.RESULT_OK, intent);
                     finish();

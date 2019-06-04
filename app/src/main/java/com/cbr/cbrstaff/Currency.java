@@ -1,13 +1,15 @@
-package com.example.cbrstaff;
+package com.cbr.cbrstaff;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Currency implements Parcelable {
+import java.io.Serializable;
 
-    private double euro;
-    private double dollar;
-    private double sterling;
+public class Currency implements Parcelable, Serializable {
+
+    public double euro;
+    public double dollar;
+    public double sterling;
 
     Currency() {
     }

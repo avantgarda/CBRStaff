@@ -3,28 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="5dp">
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/addStaffButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add_staff_text" />
+        android:layout_margin="16dp"
+        android:padding="20dp"
+        android:text="@string/add_staff_text"
+        android:textSize="36sp" />
 
     <LinearLayout
         android:id="@+id/staffDetailsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:padding="15dp">
 
         <TextView
             android:id="@+id/nameText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="36sp" />
 
         <LinearLayout
             android:id="@+id/cruiseCheckLayout"
@@ -35,33 +39,69 @@
 
             <CheckBox
                 android:id="@+id/cruiseOneCheck"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
+                android:layout_marginRight="10dp"
+                android:background="?android:attr/listChoiceIndicatorMultiple"
+                android:button="@null" />
 
             <CheckBox
                 android:id="@+id/cruiseTwoCheck"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
+                android:layout_marginRight="10dp"
+                android:background="?android:attr/listChoiceIndicatorMultiple"
+                android:button="@null" />
 
             <CheckBox
                 android:id="@+id/cruiseThreeCheck"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
+                android:layout_marginRight="10dp"
+                android:background="?android:attr/listChoiceIndicatorMultiple"
+                android:button="@null" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/balanceText"
+        <LinearLayout
+            android:id="@+id/balanceLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/balanceTextEuro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:padding="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="36sp" />
+
+            <TextView
+                android:id="@+id/balanceTextDollar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:padding="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+                android:textSize="36sp" />
+
+            <TextView
+                android:id="@+id/balanceTextSterling"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:padding="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+                android:textSize="36sp" />
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -1,16 +1,14 @@
-package com.example.cbrstaff;
+package com.cbr.cbrstaff;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.Image;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.Selection;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -113,8 +111,8 @@ public class Exchange extends AppCompatActivity {
 
                 // Return to main activity with result
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra(Outstanding.EXTRA_CURRENCY, currencyExchange);
-                returnIntent.putExtra(Outstanding.EXTRA_CURRENCY_MORE, currencyEuro);
+                returnIntent.putExtra(Outstanding.EXTRA_CURRENCY, (Parcelable)currencyExchange);
+                returnIntent.putExtra(Outstanding.EXTRA_CURRENCY_MORE, (Parcelable)currencyEuro);
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }
