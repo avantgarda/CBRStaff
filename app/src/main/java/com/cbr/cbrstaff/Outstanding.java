@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -74,13 +75,13 @@ public class Outstanding extends AppCompatActivity {
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
 
-    ArrayList<Staff> mStaff;
+    ArrayList<Staff> mStaff, backupStaff;
     ArrayList<AdapterItem> mItem;
     ArrayList<String> mKeys;
     ArrayList<Currency> mCurrencies;
     Currency mCurrency;
     int mCruises, prevCruises;
-    boolean hideCheckboxes, isArray;
+    boolean hideCheckboxes, isArray, isStart;
 
     DatabaseReference databaseStaff;
 
@@ -224,6 +225,7 @@ public class Outstanding extends AppCompatActivity {
         changeView = new changeViewImpl();
 
         mStaff = new ArrayList<>();
+        backupStaff = new ArrayList<>();
         mItem = new ArrayList<>();
         mKeys = new ArrayList<>();
         mCurrencies = new ArrayList<>();
@@ -233,6 +235,7 @@ public class Outstanding extends AppCompatActivity {
         prevCruises = 1;
 
         isArray = false;
+        isStart = true;
 
         euroText.setText(getString(R.string.main_screen_loading));
 
@@ -241,7 +244,6 @@ public class Outstanding extends AppCompatActivity {
         tipsLayoutOuter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(mStaff.size() == 0){ return; }
                 Intent intent = new Intent(Outstanding.this, Cruise.class);
                 if(hideCheckboxes) { for(AdapterItem item : mItem){ item.resetChecked(); }}
                 else {
@@ -287,6 +289,10 @@ public class Outstanding extends AppCompatActivity {
                 ArrayList<AdapterItem> tempItem = new ArrayList<>();
                 ArrayList<String> tempKey = new ArrayList<>();
 
+                // Save current database as backup
+                backupStaff.clear();
+                backupStaff.addAll(mStaff);
+
                 if(!mStaff.isEmpty()){ mStaff.clear(); }
                 for(DataSnapshot staffSnapshot : dataSnapshot.getChildren()){
                     Staff staff = staffSnapshot.getValue(Staff.class);
@@ -314,6 +320,19 @@ public class Outstanding extends AppCompatActivity {
 
                 // Update total outstanding balance and refresh list
                 changeView.refresh();
+
+                if(!isStart) {
+                    Snackbar snackbar = Snackbar
+                            .make(listAndButtonLayout, "Staff Changed", 3500)
+                            .setAction("UNDO", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    undoDatabaseChange();
+                                }
+                            });
+                    snackbar.show();
+                }
+                isStart = false;
             }
 
             @Override
@@ -487,5 +506,15 @@ public class Outstanding extends AppCompatActivity {
             return;
         }
         databaseStaff.child(idFire).setValue(staff);
+    }
+
+    public void undoDatabaseChange(){
+        if(backupStaff.isEmpty()){ return; }
+        new AlertDialog.Builder(this)
+                .setTitle("Undo?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        databaseStaff.setValue(backupStaff); }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 }

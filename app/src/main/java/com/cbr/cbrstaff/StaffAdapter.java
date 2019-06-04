@@ -84,6 +84,15 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
                     ((Activity) mContext).startActivityForResult(intent, Outstanding.RESULT_ADD_STAFF);
                 }
             });
+
+            staffViewHolder.addStaffButton.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // Undo database change
+                    ((Outstanding) mContext).undoDatabaseChange();
+                    return true;
+                }
+            });
         }
         else {
             staffViewHolder.staffDetailsLayout.setVisibility(View.VISIBLE);

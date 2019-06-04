@@ -87,7 +87,6 @@ public class Cruise extends AppCompatActivity {
             cruiseTitleText.setTextColor(Color.RED);
             nextButton.setText(R.string.update_cruise);
             numCruises = intent.getIntExtra(Outstanding.EXTRA_CRUISES, 1);
-            Log.i("HELP", "onCreate: " + numCruises);
             cruiseNumText.setText(String.format(Locale.getDefault(),"%d",numCruises));
             ArrayList<Currency> currencies = intent.getParcelableArrayListExtra(Outstanding.EXTRA_CURRENCY);
             euroInputOne.setText(getString(R.string.display_euro, currencies.get(0).getEuro()));
@@ -190,7 +189,6 @@ public class Cruise extends AppCompatActivity {
             public void onClick(View v) {
                 if(numCruises == 1){ return; }
                 numCruises--;
-                Log.i("HELP", "onClick: " + numCruises);
                 if(numCruises == 2){ totalTipsLayoutInnerThree.setVisibility(View.GONE); }
                 else if(numCruises == 1){ totalTipsLayoutInnerTwo.setVisibility(View.GONE); }
                 cruiseNumText.setText(String.format(Locale.getDefault(),"%d",numCruises));
@@ -202,7 +200,6 @@ public class Cruise extends AppCompatActivity {
             public void onClick(View v) {
                 if(numCruises == Outstanding.MAX_CRUISES){ return; }
                 numCruises++;
-                Log.i("HELP", "onClick: " + numCruises);
                 if(numCruises == 2){ totalTipsLayoutInnerTwo.setVisibility(View.VISIBLE); }
                 else if(numCruises == 3){ totalTipsLayoutInnerThree.setVisibility(View.VISIBLE); }
                 cruiseNumText.setText(String.format(Locale.getDefault(),"%d",numCruises));
